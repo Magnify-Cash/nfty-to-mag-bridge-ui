@@ -24,9 +24,9 @@ const Dropdown: FC = () => {
             as={Button}
             rightIcon={
               isOpen ? (
-                <Image src="arrowUp.svg" />
+                <Image src="arrowUp.svg" alt=""/>
               ) : (
-                <Image src="arrowDown.svg" />
+                <Image src="arrowDown.svg" alt=""/>
               )
             }
             onClick={() => setIsOpen(!isOpen)}

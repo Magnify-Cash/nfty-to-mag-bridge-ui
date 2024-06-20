@@ -46,6 +46,7 @@ const MigrateTokens: FC = () => {
             margin="0 24px"
             w="40px"
             h="40px"
+            alt=""
           />
         </Flex>
         <Flex
