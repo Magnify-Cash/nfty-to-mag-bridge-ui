@@ -1,8 +1,8 @@
-import Header from "./components/Header/Header";
-import Disclaimer from "./components/Disclaimer/Disclaimer";
+import Header from "../components/Header/Header";
+import Disclaimer from "../components/Disclaimer/Disclaimer";
 import { Flex, Box } from "@chakra-ui/react";
-import MigrationSteps from "./components/MigrationSteps/MigrationSteps";
-import { MainContent } from "./components/MainContent/MainContent";
+import MigrationSteps from "../components/MigrationSteps/MigrationSteps";
+import { MainContent } from "../components/MainContent/MainContent";
 
 export default function Home() {
   return (

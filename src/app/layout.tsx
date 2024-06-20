@@ -1,4 +1,4 @@
-import Chakra from "./Chakra";
+import Chakra from "../Chakra";
 import "./globals.css";
 import { Bai_Jamjuree } from "next/font/google";
 
