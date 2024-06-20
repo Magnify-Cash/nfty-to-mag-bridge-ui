@@ -14,7 +14,7 @@ const CustomCheckbox: FC = () => {
       onChange={() => setIsChecked(!isChecked)}
     >
       <Text fontSize="14px" fontWeight="400" color="custom.250">
-        I'm transferring to an address other than my own
+        I&apos;m transferring to an address other than my own
       </Text>
     </Checkbox>
   );
