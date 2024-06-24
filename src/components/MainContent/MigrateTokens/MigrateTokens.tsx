@@ -125,8 +125,10 @@ const MigrateTokens: FC = () => {
         <Text>Confirm Migration </Text>
       </Button>
 
+      <Box mb="20px"></Box>
+
       {/* Waiting for Lock transaction button*/}
-      {/* <Button
+      <Button
         variant="blueBtn"
         h={{ base: "48px", lg: "56px" }}
         fontSize={{ base: "14px", lg: "16px" }}
@@ -140,7 +142,7 @@ const MigrateTokens: FC = () => {
           </Box>
           <Text ml="12px">Waiting for Lock transaction </Text>
         </Flex>
-      </Button> */}
+      </Button>
     </Flex>
   );
 };

@@ -2,8 +2,11 @@
 import { Flex, Heading, Text, Center, Show } from "@chakra-ui/react";
 import React, { FC } from "react";
 import { migrationSteps } from "./data";
+import Link from "next/link";
+import { useStore } from "../../store/useStore";
 
 const MigrationSteps: FC = () => {
+  const { activeStep, setActiveStep } = useStore();
   return (
     <Flex
       bg="custom.450"
@@ -35,37 +38,43 @@ const MigrationSteps: FC = () => {
         justifyContent="space-between"
       >
         {migrationSteps.map((item) => {
+          const isActive = item.id === activeStep;
           return (
-            <Flex
-              direction={{ base: "column", lg: "row" }}
+            <Link
+              href={item.url}
               key={item.id}
-              mb={{ base: "0", lg: "24px" }}
-              alignItems="center"
+              onClick={() => setActiveStep(item.id)}
             >
-              <Center
-                fontSize={{ base: "14px", md: "16px" }}
-                w={{ base: "64px", md: "75px" }}
-                h={{ base: "32px", md: "40px" }}
-                borderRadius="20px"
-                border="1px solid"
-                mr={{ base: "0", lg: "16px" }}
-                background={item.active ? "custom.50" : "custom.500"}
-                borderColor={item.active ? "custom.50 " : "custom.150"}
-                fontWeight={item.active ? "600" : "400"}
-                color={item.active ? "custom.100 " : "custom.150"}
-                mb={{ base: "4px", sm: "8px", lg: "0" }}
+              <Flex
+                direction={{ base: "column", lg: "row" }}
+                mb={{ base: "0", lg: "24px" }}
+                alignItems="center"
               >
-                {item.id}
-              </Center>
-              <Text
-                fontSize={{ base: "14px", md: "16px" }}
-                fontWeight={item.active ? "600" : "400"}
-                color={item.active ? "custom.50" : "custom.550"}
-              >
-                <Show above="481px">{item.titleDesk}</Show>
-                <Show below="480px">{item.titleMob}</Show>
-              </Text>
-            </Flex>
+                <Center
+                  fontSize={{ base: "14px", md: "16px" }}
+                  w={{ base: "64px", md: "75px" }}
+                  h={{ base: "32px", md: "40px" }}
+                  borderRadius="20px"
+                  border="1px solid"
+                  mr={{ base: "0", lg: "16px" }}
+                  background={isActive ? "custom.50" : "custom.500"}
+                  borderColor={isActive ? "custom.50" : "custom.150"}
+                  fontWeight={isActive ? "600" : "400"}
+                  color={isActive ? "custom.100" : "custom.150"}
+                  mb={{ base: "4px", sm: "8px", lg: "0" }}
+                >
+                  {item.id}
+                </Center>
+                <Text
+                  fontSize={{ base: "14px", md: "16px" }}
+                  fontWeight={isActive ? "600" : "400"}
+                  color={isActive ? "custom.50" : "custom.550"}
+                >
+                  <Show above="481px">{item.titleDesk}</Show>
+                  <Show below="480px">{item.titleMob}</Show>
+                </Text>
+              </Flex>
+            </Link>
           );
         })}
       </Flex>

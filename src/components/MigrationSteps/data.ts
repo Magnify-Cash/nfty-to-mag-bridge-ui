@@ -3,13 +3,18 @@ export const migrationSteps = [
     id: 1,
     titleDesk: "Connect Wallet",
     titleMob: "Connect Wallet ",
-    active: false,
+    url: "/connect",
   },
-  { id: 2, titleDesk: "Migrate Tokens", titleMob: "Migration ", active: true },
+  {
+    id: 2,
+    titleDesk: "Migrate Tokens",
+    titleMob: "Migration ",
+    url: "/migrate",
+  },
   {
     id: 3,
     titleDesk: "Confirm Migration",
     titleMob: "Confirmation ",
-    active: false,
+    url: "/confirm-success",
   },
 ];

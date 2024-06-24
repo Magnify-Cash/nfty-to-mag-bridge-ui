@@ -1,10 +1,11 @@
-import Header from "../components/Header/Header";
-import Disclaimer from "../components/Disclaimer/Disclaimer";
-import { Flex, Box } from "@chakra-ui/react";
-import MigrationSteps from "../components/MigrationSteps/MigrationSteps";
+import Disclaimer from "@/components/Disclaimer/Disclaimer";
+import Header from "@/components/Header/Header";
 import ConnectWallet from "@/components/MainContent/ConnectWallet/ConnectWallet";
+// import { MainContent } from "@/components/MainContent/MainContent";
+import MigrationSteps from "@/components/MigrationSteps/MigrationSteps";
+import { Box, Flex } from "@chakra-ui/react";
 
-export default function Home() {
+function ConnectWalletPage() {
   return (
     <>
       <header>
@@ -21,6 +22,7 @@ export default function Home() {
             flexDirection={{ base: "column", lg: "row" }}
           >
             <MigrationSteps />
+
             <Flex
               bg="custom.450"
               borderRadius="20px"
@@ -32,6 +34,7 @@ export default function Home() {
               maxW={{ base: "600px", lg: "initial" }}
               w={{ base: "100%", lg: "initial" }}
             >
+              {/* Step 1 - Connect Wallet */}
               <ConnectWallet />
             </Flex>
           </Flex>
@@ -40,3 +43,5 @@ export default function Home() {
     </>
   );
 }
+
+export default ConnectWalletPage;
