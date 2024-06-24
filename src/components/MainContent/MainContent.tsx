@@ -13,6 +13,9 @@ export const MainContent: FC = () => {
       borderColor="custom.150"
       flexGrow="1"
       overflow="hidden"
+      margin={{ base: "auto", lg: "initial" }}
+      maxW={{ base: "600px", lg: "initial" }}
+      w={{ base: "100%", lg: "initial" }}
     >
       {/* Step 1 - Connect Wallet */}
       {/* <ConnectWallet /> */}
@@ -20,7 +23,7 @@ export const MainContent: FC = () => {
       {/* Step 2 - Migrate Tokens*/}
       <MigrateTokens />
 
-      {/* Step 3 - ConfirmMigration*/}
+      {/* Step 3 - Confirm Migration*/}
       {/* <ConfirmMigration /> */}
     </Flex>
   );

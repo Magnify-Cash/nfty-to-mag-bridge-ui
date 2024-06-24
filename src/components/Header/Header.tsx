@@ -1,4 +1,4 @@
-import { Center, Flex, Image, Button, Text } from "@chakra-ui/react";
+import { Center, Flex, Image, Button, Text, Show, Box } from "@chakra-ui/react";
 import Link from "next/link";
 import React, { FC } from "react";
 
@@ -6,11 +6,11 @@ const Header: FC = () => {
   return (
     <header>
       <Center
-        h="88px"
+        h={{ base: "72px", md: "88px" }}
         borderBottom="1px solid"
         borderColor="custom.350"
         mb="15px"
-        padding="0 10px"
+        padding={{ base: "0 10px", xxs: "0 16px" }}
       >
         <Flex w="1110px" justifyContent="space-between" color="custom.50">
           <Link href="/">
@@ -20,19 +20,23 @@ const Header: FC = () => {
               w="100%"
               height="100%"
               cursor="pointer"
-              transition="0.4s ease"
-              _hover={{ opacity: 0.8 }}
+              transition="0.3s ease"
             />
           </Link>
 
           {/* Connect Wallet blue button */}
           {/* <Button
             width={{
-              base: "147px",
+              base: "120px",
+              xxs: "133px",
+              md: "147px",
             }}
             variant="blueBtn"
             h="40px"
-            fontSize="14px"
+            fontSize={{
+              base: "12px",
+              sm: "14px",
+            }}
             fontWeight="500"
           >
             Connect Wallet
@@ -40,13 +44,41 @@ const Header: FC = () => {
 
           {/* Connected Wallet - 2 buttons */}
           <Flex>
-            <Button variant="tokenBtn" h="40px" mr="16px" padding="0px 24px">
-              <Image alt="NFTY icon" src="NFTY.svg" mr="11px" />
-              <Text>234</Text>
-            </Button>
+            <Show above="md">
+              <Flex
+                borderRadius="8px"
+                h="40px"
+                mr="16px"
+                padding="0px 24px"
+                background="custom.200"
+                alignItems="center"
+              >
+                <Image
+                  alt="NFTY icon"
+                  w="24px"
+                  h="24px"
+                  src="NFTY.svg"
+                  mr="11px"
+                />
+                <Text color="custom.300" fontSize="16px" fontWeight="600">
+                  234
+                </Text>
+              </Flex>
+            </Show>
 
-            <Button variant="connectBtn" h="40px" fontSize="14px" padding="0px 21px">
-              <Image alt="Metamask icon" src="Metamask.svg" mr="11px" />
+            <Button
+              variant="borderedBtn"
+              h="40px"
+              fontSize={{ base: "12px", md: "14px" }}
+              padding={{ base: "0px 5px", xxs: "0px 16px", md: "0px 21px" }}
+            >
+              <Image
+                alt="Metamask icon"
+                src="Metamask.svg"
+                mr={{ base: "8px", md: "11px" }}
+                width={{ base: "18px", md: "initial" }}
+                height={{ base: "18px", md: "initial" }}
+              />
               <Text>0 х 978...66be </Text>
             </Button>
           </Flex>

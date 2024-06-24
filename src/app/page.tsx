@@ -12,12 +12,13 @@ export default function Home() {
       </header>
       <main>
         <Disclaimer />
-        <Box padding="0 10px">
+        <Box padding={{ base: "0 10px", xxs: "0 16px" }}>
           <Flex
             maxWidth="1110px"
             justifyContent="space-between"
             margin="auto"
             mb="30"
+            flexDirection={{ base: "column", lg: "row" }}
           >
             <MigrationSteps />
             <MainContent />

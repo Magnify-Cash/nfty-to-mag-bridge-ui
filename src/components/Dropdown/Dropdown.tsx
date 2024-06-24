@@ -17,16 +17,16 @@ const Dropdown: FC = () => {
   const [selectedChain, setSelectedChain] = useState(chains[0]);
 
   return (
-    <Menu isOpen={isOpen} matchWidth>
+    <Menu isOpen={isOpen} matchWidth placement="bottom">
       {({ isOpen }) => (
         <>
           <MenuButton
             as={Button}
             rightIcon={
               isOpen ? (
-                <Image src="arrowUp.svg" alt=""/>
+                <Image src="arrowUp.svg" alt="" />
               ) : (
-                <Image src="arrowDown.svg" alt=""/>
+                <Image src="arrowDown.svg" alt="" />
               )
             }
             onClick={() => setIsOpen(!isOpen)}

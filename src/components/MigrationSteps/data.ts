@@ -1,5 +1,15 @@
 export const migrationSteps = [
-  { id: 1, title: "Connect Wallet", active: false },
-  { id: 2, title: "Migrate Tokens", active: true },
-  { id: 3, title: "Confirm Migration", active: false },
+  {
+    id: 1,
+    titleDesk: "Connect Wallet",
+    titleMob: "Connect Wallet ",
+    active: false,
+  },
+  { id: 2, titleDesk: "Migrate Tokens", titleMob: "Migration ", active: true },
+  {
+    id: 3,
+    titleDesk: "Confirm Migration",
+    titleMob: "Confirmation ",
+    active: false,
+  },
 ];

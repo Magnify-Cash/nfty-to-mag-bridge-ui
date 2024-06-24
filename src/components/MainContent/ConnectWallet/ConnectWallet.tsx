@@ -3,11 +3,16 @@ import React, { FC } from "react";
 
 const ConnectWallet: FC = () => {
   return (
-    <Flex direction="column" padding="40px 80px" alignItems="center" w="100%">
+    <Flex
+      direction="column"
+      padding={{ base: "21px 16px", lg: "40px 80px" }}
+      alignItems="center"
+      w="100%"
+    >
       <Heading
         as="h2"
         mb="14px"
-        fontSize={{ base: "20px", md: "20px" }}
+        fontSize={{ base: "18px", sm: "20px" }}
         fontWeight="700"
         color="custom.300"
         textAlign="center"
@@ -16,12 +21,12 @@ const ConnectWallet: FC = () => {
       </Heading>
       <Text
         color="custom.250"
-        maxW="460px"
+        maxW="540px"
         textAlign="center"
         fontWeight="400"
-        fontSize="16px"
-        lineHeight="24px"
-        mb="25px"
+        fontSize={{ base: "14px", sm: "16px" }}
+        lineHeight={{ base: "21px", sm: "24px" }}
+        mb={{ base: "22px", sm: "25px" }}
       >
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua.
@@ -29,7 +34,7 @@ const ConnectWallet: FC = () => {
 
       <Flex direction="column" w="100%">
         <Button
-          variant="connectBtn"
+          variant="borderedBtn"
           h="56px"
           fontSize="18px"
           w="100%"
@@ -39,7 +44,7 @@ const ConnectWallet: FC = () => {
           <Text>Metamask</Text>
         </Button>
 
-        <Button variant="connectBtn" h="56px" fontSize="18px" w="100%">
+        <Button variant="borderedBtn" h="56px" fontSize="18px" w="100%">
           <Image alt="WalletConnect icon" src="walletConnect.svg" mr="15px" />
           <Text>WalletConnect </Text>
         </Button>

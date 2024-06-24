@@ -1,7 +1,18 @@
 import { extendTheme } from "@chakra-ui/react";
 import "@fontsource/bai-jamjuree";
 
+const breakpoints = {
+  xxs: "23em", //368px
+  sm: "30em", // 480px
+  md: "48em", // 768px
+  lg: "62em", // 992px
+  xl: "80em", // 1280px
+  "2xl": "96em", // 1536px
+  xxl: "110em", // 1760px
+};
+
 const theme = extendTheme({
+  breakpoints,
   styles: {
     global: {
       "*": {
@@ -9,8 +20,11 @@ const theme = extendTheme({
       },
       body: {
         bg: "custom.200",
-        background:
+        background: [
+          "radial-gradient(circle at top, #2f504ffc 0%, rgba(32, 34, 34, 1) 50%)",
+          "radial-gradient(circle at top, #2f504ffc 0%, rgba(32, 34, 34, 1) 50%)",
           "radial-gradient(circle at top, #406968 0%, rgba(32, 34, 34, 1) 44%)",
+        ],
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed",
@@ -35,6 +49,7 @@ const theme = extendTheme({
       500: "rgba(26, 38, 37, 1)",
       550: "rgba(89, 129, 127, 1)",
       600: "rgba(255, 107, 105, 1)",
+      650: "#f77",
     },
   },
 
@@ -50,35 +65,24 @@ const theme = extendTheme({
           borderRadius: "8px",
           background: "custom.50",
           color: "custom.100",
-          transition: "all .4s ease",
+          transition: "background-color .3s",
           _hover: {
-            opacity: "0.7",
+            background: "custom.650",
           },
         },
 
-        tokenBtn: {
-          fontSize: "16px",
-          fontWeight: "600",
-          borderRadius: "8px",
-          background: "custom.200",
-          color: "custom.300",
-          transition: "all .4s ease",
-          _hover: {
-            opacity: "0.7",
-          },
-        },
-
-        connectBtn: {
+        borderedBtn: {
           fontWeight: "400",
           borderRadius: "8px",
           border: "1px solid",
           borderColor: "custom.250",
           background: "transparent",
           color: "custom.300",
-          transition: "all .4s ease",
+          transition: "all .3s ease",
           _hover: {
             borderColor: "custom.50",
-            color: "custom.50",
+            background: "custom.50",
+            color: "white",
           },
         },
       },
@@ -92,21 +96,31 @@ const theme = extendTheme({
           borderWidth: "1px",
           borderRadius: "2px",
           borderColor: "custom.250",
+          outline: "none",
+          boxShadow: "none",
           _checked: {
             bg: "transparent",
             borderColor: "custom.250",
+            outline: "none",
+            boxShadow: "none",
             _hover: {
               borderColor: "custom.250",
               bg: "transparent",
+              outline: "none",
+              boxShadow: "none",
             },
           },
           _hover: {
             bg: "transparent",
             borderColor: "custom.250",
+            outline: "none",
+            boxShadow: "none",
           },
           _focus: {
             bg: "transparent",
             borderColor: "custom.250",
+            outline: "none",
+            boxShadow: "none",
           },
         },
       },
