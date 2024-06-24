@@ -4,7 +4,7 @@ import ConfirmMigrationSuccess from "@/components/MainContent/ConfirmMigration/C
 import MigrationSteps from "@/components/MigrationSteps/MigrationSteps";
 import { Box, Flex } from "@chakra-ui/react";
 
-function ConfirmMigrationPage() {
+function ConfirmMigrationSuccessPage() {
   return (
     <>
       <header>
@@ -42,4 +42,4 @@ function ConfirmMigrationPage() {
   );
 }
 
-export default ConfirmMigrationPage;
+export default ConfirmMigrationSuccessPage;
