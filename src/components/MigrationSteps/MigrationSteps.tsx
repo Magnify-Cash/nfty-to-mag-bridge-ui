@@ -1,5 +1,5 @@
 "use client";
-import { Flex, Heading, Text, Center, Show } from "@chakra-ui/react";
+import { Flex, Heading, Text, Center, Show, Box } from "@chakra-ui/react";
 import React, { FC } from "react";
 import { migrationSteps } from "./data";
 import Link from "next/link";
@@ -70,8 +70,12 @@ const MigrationSteps: FC = () => {
                   fontWeight={isActive ? "600" : "400"}
                   color={isActive ? "custom.50" : "custom.550"}
                 >
-                  <Show above="481px">{item.titleDesk}</Show>
-                  <Show below="480px">{item.titleMob}</Show>
+                  <Box as="span" display={{ base: "none", sm: "block" }}>
+                    {item.titleDesk}
+                  </Box>
+                  <Box as="span" display={{ base: "block", sm: "none" }}>
+                    {item.titleMob}
+                  </Box>
                 </Text>
               </Flex>
             </Link>

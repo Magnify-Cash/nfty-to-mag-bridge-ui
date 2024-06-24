@@ -44,27 +44,26 @@ const Header: FC = () => {
 
           {/* Connected Wallet - 2 buttons */}
           <Flex>
-            <Show above="md">
-              <Flex
-                borderRadius="8px"
-                h="40px"
-                mr="16px"
-                padding="0px 24px"
-                background="custom.200"
-                alignItems="center"
-              >
-                <Image
-                  alt="NFTY icon"
-                  w="24px"
-                  h="24px"
-                  src="NFTY.svg"
-                  mr="11px"
-                />
-                <Text color="custom.300" fontSize="16px" fontWeight="600">
-                  234
-                </Text>
-              </Flex>
-            </Show>
+            <Flex
+              borderRadius="8px"
+              h="40px"
+              mr="16px"
+              padding="0px 24px"
+              background="custom.200"
+              alignItems="center"
+              display={{ base: "none", md: "flex" }}
+            >
+              <Image
+                alt="NFTY icon"
+                w="24px"
+                h="24px"
+                src="NFTY.svg"
+                mr="11px"
+              />
+              <Text color="custom.300" fontSize="16px" fontWeight="600">
+                234
+              </Text>
+            </Flex>
 
             <Button
               variant="borderedBtn"

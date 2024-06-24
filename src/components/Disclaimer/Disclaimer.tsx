@@ -18,6 +18,7 @@ const Disclaimer: FC = () => {
         fontSize={{ base: "11px", sm: "12px" }}
         position="relative"
         borderRadius="8px"
+        color="custom.250"
       >
         <Box
           width="24px"
@@ -37,37 +38,27 @@ const Disclaimer: FC = () => {
           DISCLAIMER
         </Text>
 
-        <Show above="md">
-          <Flex direction="column" alignItems="center">
-            <Text
-              color="custom.250"
-              maxW="360px"
-              textAlign="center"
-              mb="-2px"
-              fontWeight="400"
-            >
-              NFTY Token is discontinued and will be terminated at &lt;Timer&gt;{" "}
-            </Text>
-            <Text
-              color="custom.250"
-              maxW="500px"
-              textAlign="center"
-              fontWeight="400"
-            >
-              Before that we allow migration for all NFTY holders as of
-              &lt;date&gt; Migration is valid &lt;timer&gt;
-            </Text>
-          </Flex>
-        </Show>
+        <Flex
+          direction="column"
+          alignItems="center"
+          display={{ base: "none", md: "flex" }}
+        >
+          <Text maxW="360px" textAlign="center" mb="-2px" fontWeight="400">
+            NFTY Token is discontinued and will be terminated at &lt;Timer&gt;{" "}
+          </Text>
+          <Text maxW="500px" textAlign="center" fontWeight="400">
+            Before that we allow migration for all NFTY holders as of
+            &lt;date&gt; Migration is valid &lt;timer&gt;
+          </Text>
+        </Flex>
 
-        <Show below="md">
-          <Text textAlign="center">
-            {" "}
+        <Flex>
+          <Text textAlign="center" display={{ base: "flex", md: "none" }}>
             NFTY Token is discontinued and will be terminated at &lt;Timer&gt;{" "}
             Before that we allow migration for all NFTY holders as of
             &lt;date&gt; Migration is valid &lt;timer&gt;{" "}
           </Text>
-        </Show>
+        </Flex>
       </Flex>
     </Box>
   );
