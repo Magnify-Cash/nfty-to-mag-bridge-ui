@@ -1,4 +1,4 @@
-import Header from "../components/Header/Header";
+import Header from "@/components/Layout/Header";
 import Disclaimer from "../components/Disclaimer/Disclaimer";
 import { Box, Flex } from "@chakra-ui/react";
 import MigrationSteps from "../components/MigrationSteps/MigrationSteps";
