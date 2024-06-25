@@ -17,7 +17,6 @@ export const WalletButton = ({
       h="56px"
       fontSize="18px"
       w="100%"
-      mb="16px"
       {...props}
     >
       <Image alt="wallet_icon" src={buttonConfig?.icon} mr="15px" />

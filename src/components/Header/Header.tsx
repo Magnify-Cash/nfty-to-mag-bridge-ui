@@ -1,31 +1,35 @@
+"use client";
 import { Button, Center, Flex, Image, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import React, { FC } from "react";
+import { useAccount } from "wagmi";
+import {getShortAddress} from "@/lib/helpers/utils";
 
 const Header: FC = () => {
-  return (
-    <header>
-      <Center
-        h={{ base: "72px", md: "88px" }}
-        borderBottom="1px solid"
-        borderColor="custom.350"
-        mb="15px"
-        padding={{ base: "0 10px", xxs: "0 16px" }}
-      >
-        <Flex w="1110px" justifyContent="space-between" color="custom.50">
-          <Link href="/">
-            <Image
-              alt="Magnify cash logo"
-              src="logo.svg"
-              w="100%"
-              height="100%"
-              cursor="pointer"
-              transition="0.3s ease"
-            />
-          </Link>
+  const { address } = useAccount();
 
-          {/* Connect Wallet blue button */}
-          {/* <Button
+  return (
+    <Center
+      as="header"
+      h={{ base: "72px", md: "88px" }}
+      borderBottom="1px solid"
+      borderColor="custom.350"
+      mb="15px"
+      padding={{ base: "0 10px", xxs: "0 16px" }}
+    >
+      <Flex w="1110px" justifyContent="space-between" color="custom.50">
+        <Link href="/">
+          <Image
+            alt="Magnify cash logo"
+            src="logo.svg"
+            w="100%"
+            height="100%"
+            cursor="pointer"
+            transition="0.3s ease"
+          />
+        </Link>
+        {!address ? (
+          <Button
             width={{
               base: "120px",
               xxs: "133px",
@@ -40,9 +44,8 @@ const Header: FC = () => {
             fontWeight="500"
           >
             Connect Wallet
-          </Button> */}
-
-          {/* Connected Wallet - 2 buttons */}
+          </Button>
+        ) : (
           <Flex>
             <Flex
               borderRadius="8px"
@@ -78,12 +81,12 @@ const Header: FC = () => {
                 width={{ base: "18px", md: "initial" }}
                 height={{ base: "18px", md: "initial" }}
               />
-              <Text>0 х 978...66be </Text>
+              <Text>{getShortAddress(address)} </Text>
             </Button>
           </Flex>
-        </Flex>
-      </Center>
-    </header>
+        )}
+      </Flex>
+    </Center>
   );
 };
 

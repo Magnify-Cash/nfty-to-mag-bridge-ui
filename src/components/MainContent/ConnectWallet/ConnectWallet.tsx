@@ -36,7 +36,7 @@ const ConnectWallet = () => {
         tempor incididunt ut labore et dolore magna aliqua.
       </Text>
 
-      <Flex direction="column" w="100%">
+      <Flex direction="column" w="100%" gap='16px'>
         {connectors.map((connector) => (
           <WalletButton
             key={connector.uid}

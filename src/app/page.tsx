@@ -7,9 +7,7 @@ import ConnectWallet from "@/components/MainContent/ConnectWallet/ConnectWallet"
 export default function Home() {
   return (
     <>
-      <header>
-        <Header />
-      </header>
+      <Header />
       <main>
         <Disclaimer />
         <Box padding={{ base: "0 10px", xxs: "0 16px" }}>
