@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text, Input, Button } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Input, Text } from "@chakra-ui/react";
 import React, { FC } from "react";
 import Dropdown from "../../Dropdown/Dropdown";
 import Loader from "../../Loader/Loader";

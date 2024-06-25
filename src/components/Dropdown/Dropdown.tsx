@@ -1,13 +1,13 @@
 "use client";
 import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   Button,
   Flex,
-  Text,
   Image,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
 } from "@chakra-ui/react";
 import React, { FC, useState } from "react";
 import { chains } from "./data";

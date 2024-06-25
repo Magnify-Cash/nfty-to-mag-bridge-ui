@@ -1,6 +1,6 @@
-import { Text, Flex, Box, Show } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import React, { FC } from "react";
-import CloseIcon from "../CloseIcon/CloseIcon";
+import CloseIcon from "@/assets/icons/CloseIcon";
 
 const Disclaimer: FC = () => {
   return (

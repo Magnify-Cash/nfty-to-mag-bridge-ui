@@ -1,5 +1,5 @@
 "use client";
-import { Flex, Heading, Text, Center, Show, Box } from "@chakra-ui/react";
+import { Box, Center, Flex, Heading, Text } from "@chakra-ui/react";
 import React, { FC } from "react";
 import { migrationSteps } from "./data";
 import Link from "next/link";

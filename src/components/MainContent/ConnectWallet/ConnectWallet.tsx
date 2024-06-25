@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Text, Image } from "@chakra-ui/react";
+import { Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import React, { FC } from "react";
 
 const ConnectWallet: FC = () => {
