@@ -1,8 +1,8 @@
-import { Box, Flex, Image, Text, Input, Button } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 import React, { FC } from "react";
-import Dropdown from "../../Dropdown/Dropdown";
+import SwitchNetworkDropdown from "../../Dropdown/SwitchNetworkDropdown";
 import Loader from "../../Loader/Loader";
-import CustomCheckbox from "../../CustomCheckbox/CustomCheckbox";
+import { TransferringToOtherAddress } from "@/components/MainContent/MigrateTokens/TransferringToOtherAddress";
 
 const MigrateTokens: FC = () => {
   return (
@@ -12,7 +12,7 @@ const MigrateTokens: FC = () => {
       w="100%"
     >
       <Box mb="24px" w="100%">
-        <Dropdown />
+        <SwitchNetworkDropdown />
       </Box>
 
       <Flex
@@ -87,17 +87,7 @@ const MigrateTokens: FC = () => {
         </Flex>
       </Flex>
 
-      <Flex mb="16px">
-        <CustomCheckbox />
-      </Flex>
-
-      <Flex mb={{ base: "16px", lg: "24px" }}>
-        <Input
-          borderColor="custom.550"
-          placeholder="Enter a Destination Address"
-          h="48px"
-        />
-      </Flex>
+      <TransferringToOtherAddress />
 
       {/* Confirm migration button*/}
       <Button

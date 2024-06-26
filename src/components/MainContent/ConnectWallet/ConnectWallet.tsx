@@ -1,7 +1,11 @@
-import { Button, Flex, Heading, Text, Image } from "@chakra-ui/react";
-import React, { FC } from "react";
+"use client";
 
-const ConnectWallet: FC = () => {
+import { Flex, Heading, Text } from "@chakra-ui/react";
+import { useConnect } from "wagmi";
+import { WalletButton } from "./WalletButton";
+
+const ConnectWallet = () => {
+  const { connectors, connect } = useConnect();
   return (
     <Flex
       direction="column"
@@ -32,22 +36,14 @@ const ConnectWallet: FC = () => {
         tempor incididunt ut labore et dolore magna aliqua.
       </Text>
 
-      <Flex direction="column" w="100%">
-        <Button
-          variant="borderedBtn"
-          h="56px"
-          fontSize="18px"
-          w="100%"
-          mb="16px"
-        >
-          <Image alt="Metamask icon" src="Metamask.svg" mr="15px" />
-          <Text>Metamask</Text>
-        </Button>
-
-        <Button variant="borderedBtn" h="56px" fontSize="18px" w="100%">
-          <Image alt="WalletConnect icon" src="walletConnect.svg" mr="15px" />
-          <Text>WalletConnect </Text>
-        </Button>
+      <Flex direction="column" w="100%" gap='16px'>
+        {connectors.map((connector) => (
+          <WalletButton
+            key={connector.uid}
+            connectorName={connector.name}
+            onClick={() => connect({ connector })}
+          />
+        ))}
       </Flex>
     </Flex>
   );

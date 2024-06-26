@@ -1,15 +1,13 @@
-import Header from "../components/Header/Header";
+import Header from "@/components/Layout/Header";
 import Disclaimer from "../components/Disclaimer/Disclaimer";
-import { Flex, Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import MigrationSteps from "../components/MigrationSteps/MigrationSteps";
 import ConnectWallet from "@/components/MainContent/ConnectWallet/ConnectWallet";
 
 export default function Home() {
   return (
     <>
-      <header>
-        <Header />
-      </header>
+      <Header />
       <main>
         <Disclaimer />
         <Box padding={{ base: "0 10px", xxs: "0 16px" }}>

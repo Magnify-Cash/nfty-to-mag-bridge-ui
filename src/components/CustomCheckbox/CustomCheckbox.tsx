@@ -1,17 +1,26 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
 import { Checkbox, Text } from "@chakra-ui/react";
 import CustomCheckmarkIcon from "./CustomCheckmarkIcon/CustomCheckmarkIcon";
 
-const CustomCheckbox: FC = () => {
+const CustomCheckbox = ({
+  onChange,
+}: {
+  onChange?: (isChecked: boolean) => void;
+}) => {
   const [isChecked, setIsChecked] = useState(false);
+
+  const onChangeHandler = () => {
+    setIsChecked(!isChecked);
+    onChange?.(!isChecked);
+  };
 
   return (
     <Checkbox
       borderColor="custom.250"
       icon={isChecked ? <CustomCheckmarkIcon /> : <></>}
       isChecked={isChecked}
-      onChange={() => setIsChecked(!isChecked)}
+      onChange={onChangeHandler}
     >
       <Text
         fontSize={{ base: "11px", xxs: "12px", xl: "14px" }}

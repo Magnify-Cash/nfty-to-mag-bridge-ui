@@ -1,12 +1,29 @@
 "use client";
-import { Flex, Heading, Text, Center, Show, Box } from "@chakra-ui/react";
-import React, { FC } from "react";
+import { Box, Center, Flex, Heading, Text, useSteps } from "@chakra-ui/react";
+import React, { useEffect } from "react";
 import { migrationSteps } from "./data";
-import Link from "next/link";
-import { useStore } from "../../store/useStore";
 
-const MigrationSteps: FC = () => {
-  const { activeStep, setActiveStep } = useStore();
+import { useAccount } from "wagmi";
+import { useIsMounted } from "@/lib/hooks/isMounted";
+import { Link } from "@chakra-ui/next-js";
+import { useRouter } from "next/navigation";
+
+const MigrationSteps = () => {
+  const { isConnected } = useAccount();
+  const router = useRouter();
+  const { activeStep, setActiveStep } = useSteps({
+    index: 0,
+    count: migrationSteps.length,
+  });
+  const isMounted = useIsMounted();
+
+  useEffect(() => {
+    if (isConnected) {
+      setActiveStep(1);
+      router.push(migrationSteps[1].url);
+    }
+  }, [isConnected]);
+
   return (
     <Flex
       bg="custom.450"
@@ -38,12 +55,23 @@ const MigrationSteps: FC = () => {
         justifyContent="space-between"
       >
         {migrationSteps.map((item) => {
-          const isActive = item.id === activeStep;
+          const isActive = isMounted && item.id === activeStep;
+          const isFirstStep = item.id === 0;
+          const connectItemUrl = isFirstStep && !isConnected ? item.url : "";
+
           return (
             <Link
-              href={item.url}
               key={item.id}
-              onClick={() => setActiveStep(item.id)}
+              href={isFirstStep ? connectItemUrl : item.url}
+              onClick={() => {
+                if (isFirstStep && !connectItemUrl) {
+                  return;
+                }
+                setActiveStep(item.id);
+              }}
+              _hover={{
+                textDecoration: "none",
+              }}
             >
               <Flex
                 direction={{ base: "column", lg: "row" }}
@@ -63,7 +91,7 @@ const MigrationSteps: FC = () => {
                   color={isActive ? "custom.100" : "custom.150"}
                   mb={{ base: "4px", sm: "8px", lg: "0" }}
                 >
-                  {item.id}
+                  {item.id + 1}
                 </Center>
                 <Text
                   fontSize={{ base: "14px", md: "16px" }}

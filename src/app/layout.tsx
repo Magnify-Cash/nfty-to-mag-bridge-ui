@@ -1,6 +1,9 @@
-import Chakra from "../Chakra";
-import "./globals.css";
+import { ReactNode } from "react";
 import { Bai_Jamjuree } from "next/font/google";
+
+import "./globals.css";
+import { MainProvider } from "@/lib/providers/MainProvider";
+import { MainLayout } from "@/components/Layout/MainLayout";
 
 const baiJamjuree = Bai_Jamjuree({
   subsets: ["latin"],
@@ -10,12 +13,14 @@ const baiJamjuree = Bai_Jamjuree({
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en">
       <body className={baiJamjuree.className}>
-        <Chakra>{children}</Chakra>
+        <MainProvider>
+          <MainLayout>{children}</MainLayout>
+        </MainProvider>
       </body>
     </html>
   );
