@@ -20,7 +20,7 @@ const chainsAdditionalConfig: Record<number, { icon: string }> = {
   137: { icon: "/Polygon.svg" },
 };
 
-const Dropdown: FC = () => {
+const SwitchNetworkDropdown: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { chains, switchChain } = useSwitchChain();
   const chainId = useChainId();
@@ -141,4 +141,4 @@ const Dropdown: FC = () => {
   );
 };
 
-export default Dropdown;
+export default SwitchNetworkDropdown;
