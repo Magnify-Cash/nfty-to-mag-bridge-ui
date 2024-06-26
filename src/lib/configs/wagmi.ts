@@ -1,10 +1,10 @@
 import { createConfig, http } from "wagmi";
-import { mainnet, sepolia } from "wagmi/chains";
+import { bsc, mainnet, polygon, sepolia } from "wagmi/chains";
 import { injected, walletConnect } from "wagmi/connectors";
 
 export const wagmiConfig = createConfig({
   multiInjectedProviderDiscovery: false,
-  chains: [mainnet, sepolia],
+  chains: [mainnet, sepolia, bsc, polygon],
   connectors: [
     injected(),
     walletConnect({
@@ -14,5 +14,7 @@ export const wagmiConfig = createConfig({
   transports: {
     [mainnet.id]: http(),
     [sepolia.id]: http(),
+    [polygon.id]: http(),
+    [bsc.id]: http(),
   },
 });

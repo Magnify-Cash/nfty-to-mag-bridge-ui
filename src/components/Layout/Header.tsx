@@ -3,12 +3,13 @@
 import { Button, Center, Flex, Image, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import React, { FC, useMemo } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { getShortAddress } from "@/lib/helpers/utils";
 import { useIsMounted } from "@/lib/hooks/isMounted";
 
 const Header: FC = () => {
   const { address } = useAccount();
+  const { disconnect } = useDisconnect();
   const isMounted = useIsMounted();
 
   const renderButtons = useMemo(
@@ -52,6 +53,7 @@ const Header: FC = () => {
             h="40px"
             fontSize={{ base: "12px", md: "14px" }}
             padding={{ base: "0px 5px", xxs: "0px 16px", md: "0px 21px" }}
+            onClick={() => disconnect()}
           >
             <Image
               alt="Metamask icon"
