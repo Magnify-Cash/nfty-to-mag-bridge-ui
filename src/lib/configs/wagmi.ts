@@ -1,20 +1,22 @@
 import { createConfig, http } from "wagmi";
-import { bsc, mainnet, polygon, sepolia } from "wagmi/chains";
+import { bscTestnet, polygonAmoy, sepolia } from "wagmi/chains";
 import { injected, walletConnect } from "wagmi/connectors";
+
+const devChains = [sepolia, polygonAmoy, bscTestnet] as const;
+const devTransports = {
+  [sepolia.id]: http(),
+  [polygonAmoy.id]: http(),
+  [bscTestnet.id]: http(),
+} as const;
 
 export const wagmiConfig = createConfig({
   multiInjectedProviderDiscovery: false,
-  chains: [mainnet, sepolia, bsc, polygon],
+  chains: devChains,
   connectors: [
     injected(),
     walletConnect({
       projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? "",
     }),
   ],
-  transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
-    [polygon.id]: http(),
-    [bsc.id]: http(),
-  },
+  transports: devTransports,
 });

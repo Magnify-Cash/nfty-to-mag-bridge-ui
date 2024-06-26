@@ -17,7 +17,9 @@ const chainsAdditionalConfig: Record<number, { icon: string }> = {
   1: { icon: "/Ethereum.svg" },
   11155111: { icon: "/Ethereum.svg" },
   56: { icon: "/BNB.svg" },
+  97: { icon: "/BNB.svg" },
   137: { icon: "/Polygon.svg" },
+  80002: { icon: "/Polygon.svg" },
 };
 
 const SwitchNetworkDropdown: FC = () => {
@@ -81,6 +83,7 @@ const SwitchNetworkDropdown: FC = () => {
             borderColor="custom.250"
           >
             {chains.map((item) => {
+              console.log(item);
               const { icon } = chainsAdditionalConfig[item.id ?? "1"];
               return (
                 <MenuItem
