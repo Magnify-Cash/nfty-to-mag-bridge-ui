@@ -2,15 +2,26 @@
 
 import { Button, Center, Flex, Image, Text } from "@chakra-ui/react";
 import Link from "next/link";
-import React, { FC, useMemo } from "react";
-import { useAccount, useDisconnect } from "wagmi";
+import React, { useMemo } from "react";
+import { useAccount, useChainId, useDisconnect } from "wagmi";
 import { getShortAddress } from "@/lib/helpers/utils";
 import { useIsMounted } from "@/lib/hooks/isMounted";
+import { useAllNetworkUserTokenBalance } from "@/api/web3/read/tokenBalance";
+import { formatUnits } from "viem";
 
-const Header: FC = () => {
+const Header = () => {
   const { address } = useAccount();
+  const chainId = useChainId();
   const { disconnect } = useDisconnect();
+
   const isMounted = useIsMounted();
+  const { data } = useAllNetworkUserTokenBalance();
+
+  const activeTokenAmountBigint = data[chainId].amount;
+  const activeTokenAmount = useMemo(
+    () => formatUnits(activeTokenAmountBigint, 18),
+    [activeTokenAmountBigint],
+  );
 
   const renderButtons = useMemo(
     () =>
@@ -44,7 +55,7 @@ const Header: FC = () => {
           >
             <Image alt="NFTY icon" w="24px" h="24px" src="NFTY.svg" mr="11px" />
             <Text color="custom.300" fontSize="16px" fontWeight="600">
-              234
+              {activeTokenAmount}
             </Text>
           </Flex>
 
@@ -66,7 +77,7 @@ const Header: FC = () => {
           </Button>
         </Flex>
       ),
-    [address],
+    [activeTokenAmount, address, disconnect],
   );
 
   return (
