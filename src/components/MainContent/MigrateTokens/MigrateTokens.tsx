@@ -1,10 +1,33 @@
+"use client";
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
-import React, { FC } from "react";
 import SwitchNetworkDropdown from "../../Dropdown/SwitchNetworkDropdown";
 import Loader from "../../Loader/Loader";
 import { TransferringToOtherAddress } from "@/components/MainContent/MigrateTokens/TransferringToOtherAddress";
+import { useApproveNFTYToken } from "@/api/web3/write/erc20";
+import { useCheckAllowanceNFTYToken } from "@/api/web3/read/erc20";
+import { useMemo } from "react";
+import { parseUnits } from "viem";
 
-const MigrateTokens: FC = () => {
+const MigrateTokens = () => {
+  const { approveUsdc, isPending } = useApproveNFTYToken();
+  const { isApproved } = useCheckAllowanceNFTYToken({ amount: 201 });
+
+  const buttonConfig = useMemo(() => {
+    switch (true) {
+      case !isApproved:
+        return {
+          text: "Approve tokens",
+          onClick: () => approveUsdc(parseUnits("201", 18)),
+          isLoading: isPending,
+        };
+      default:
+        return {
+          text: "Pending",
+          onClick: () => {},
+        };
+    }
+  }, [approveUsdc, isPending, isApproved]);
+
   return (
     <Flex
       direction="column"
@@ -91,12 +114,13 @@ const MigrateTokens: FC = () => {
 
       {/* Confirm migration button*/}
       <Button
+        onClick={buttonConfig.onClick}
+        isLoading={buttonConfig.isLoading}
         variant="blueBtn"
         h={{ base: "48px", lg: "56px" }}
         fontSize={{ base: "14px", lg: "16px" }}
         fontWeight="600"
         w="100%"
-        // isDisabled
         sx={{
           _disabled: {
             bg: "custom.150",
@@ -112,7 +136,7 @@ const MigrateTokens: FC = () => {
           },
         }}
       >
-        <Text>Confirm Migration </Text>
+        {buttonConfig.text}
       </Button>
 
       <Box mb="20px"></Box>

@@ -83,7 +83,6 @@ const SwitchNetworkDropdown: FC = () => {
             borderColor="custom.250"
           >
             {chains.map((item) => {
-              console.log(item);
               const { icon } = chainsAdditionalConfig[item.id ?? "1"];
               return (
                 <MenuItem
