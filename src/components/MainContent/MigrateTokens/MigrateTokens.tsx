@@ -1,32 +1,50 @@
 "use client";
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 import SwitchNetworkDropdown from "../../Dropdown/SwitchNetworkDropdown";
-import Loader from "../../Loader/Loader";
 import { TransferringToOtherAddress } from "@/components/MainContent/MigrateTokens/TransferringToOtherAddress";
 import { useApproveNFTYToken } from "@/api/web3/write/erc20";
 import { useCheckAllowanceNFTYToken } from "@/api/web3/read/erc20";
 import { useMemo } from "react";
 import { parseUnits } from "viem";
+import { useSendToBridge } from "@/api/web3/write/bridge";
+import { useAccount } from "wagmi";
 
 const MigrateTokens = () => {
+  const { address } = useAccount();
   const { approveUsdc, isPending } = useApproveNFTYToken();
-  const { isApproved } = useCheckAllowanceNFTYToken({ amount: 201 });
-
+  const { sendToBridge, isPending: isPendingSendToBridge } = useSendToBridge();
+  const { isApproved } = useCheckAllowanceNFTYToken({
+    amount: parseUnits("20", 18),
+  });
   const buttonConfig = useMemo(() => {
     switch (true) {
       case !isApproved:
         return {
           text: "Approve tokens",
-          onClick: () => approveUsdc(parseUnits("201", 18)),
+          onClick: () => approveUsdc(parseUnits("20", 18)),
           isLoading: isPending,
+        };
+      case isApproved:
+        return {
+          text: "Confirm Migration",
+          onClick: () =>
+            sendToBridge({ amount: parseUnits("20", 18), address: address! }),
+          isLoading: isPendingSendToBridge,
         };
       default:
         return {
-          text: "Pending",
+          text: "Loading",
           onClick: () => {},
         };
     }
-  }, [approveUsdc, isPending, isApproved]);
+  }, [
+    isApproved,
+    isPending,
+    isPendingSendToBridge,
+    approveUsdc,
+    sendToBridge,
+    address,
+  ]);
 
   return (
     <Flex
@@ -139,24 +157,23 @@ const MigrateTokens = () => {
         {buttonConfig.text}
       </Button>
 
-      <Box mb="20px"></Box>
+      {/*<Box mb="20px"></Box>*/}
 
-      {/* Waiting for Lock transaction button*/}
-      <Button
-        variant="blueBtn"
-        h={{ base: "48px", lg: "56px" }}
-        fontSize={{ base: "14px", lg: "16px" }}
-        fontWeight="600"
-        w="100%"
-        pointerEvents="none"
-      >
-        <Flex>
-          <Box>
-            <Loader />
-          </Box>
-          <Text ml="12px">Waiting for Lock transaction </Text>
-        </Flex>
-      </Button>
+      {/*<Button*/}
+      {/*  variant="blueBtn"*/}
+      {/*  h={{ base: "48px", lg: "56px" }}*/}
+      {/*  fontSize={{ base: "14px", lg: "16px" }}*/}
+      {/*  fontWeight="600"*/}
+      {/*  w="100%"*/}
+      {/*  pointerEvents="none"*/}
+      {/*>*/}
+      {/*  /!*<Flex>*!/*/}
+      {/*  /!*  <Box>*!/*/}
+      {/*  /!*    <Loader />*!/*/}
+      {/*  /!*  </Box>*!/*/}
+      {/*  /!*  <Text ml="12px">Waiting for Lock transaction </Text>*!/*/}
+      {/*  /!*</Flex>*!/*/}
+      {/*</Button>*/}
     </Flex>
   );
 };

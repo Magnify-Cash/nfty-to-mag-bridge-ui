@@ -1,7 +1,7 @@
 import { useContractByNetworkId } from "@/api/web3/hooks/useContractByNetworkId";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useCallback } from "react";
-import { ERC20Abi } from "@/lib/abi/ERC20";
+import { BridgeAbi } from "@/lib/abi/bridge";
 
 export const useSendToBridge = () => {
   const { contracts } = useContractByNetworkId();
@@ -12,13 +12,13 @@ export const useSendToBridge = () => {
     isPending: isPendingWallet,
   } = useWriteContract();
 
-  const approveUsdc = useCallback(
-    (amount: bigint) =>
+  const sendToBridge = useCallback(
+    ({ address, amount }: { address: `0x${string}`; amount: bigint }) =>
       writeContract({
-        address: contracts.NFTYToken.address,
-        abi: ERC20Abi,
-        functionName: "approve",
-        args: [contracts.bridge.address, amount],
+        address: contracts.bridge.address,
+        abi: BridgeAbi,
+        functionName: "send",
+        args: [contracts.NFTYToken.address, address, amount],
       }),
     [writeContract, contracts],
   );
@@ -27,5 +27,5 @@ export const useSendToBridge = () => {
 
   const isPending = isLoading || isPendingWallet;
 
-  return { approveUsdc, isPending };
+  return { sendToBridge, isPending };
 };
