@@ -7,16 +7,19 @@ const devTransports = {
   [sepolia.id]: http(),
   [polygonAmoy.id]: http(),
   [bscTestnet.id]: http(),
-} as const;
+};
+
+export const chains = [...devChains] as const;
+const transports = { ...devTransports };
 
 export const wagmiConfig = createConfig({
   multiInjectedProviderDiscovery: false,
-  chains: devChains,
+  chains,
   connectors: [
     injected(),
     walletConnect({
       projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? "",
     }),
   ],
-  transports: devTransports,
+  transports,
 });

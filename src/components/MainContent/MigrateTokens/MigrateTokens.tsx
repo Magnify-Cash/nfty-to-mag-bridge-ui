@@ -5,30 +5,44 @@ import { TransferringToOtherAddress } from "@/components/MainContent/MigrateToke
 import { useApproveNFTYToken } from "@/api/web3/write/erc20";
 import { useCheckAllowanceNFTYToken } from "@/api/web3/read/erc20";
 import { useMemo } from "react";
-import { parseUnits } from "viem";
+import { formatUnits } from "viem";
 import { useSendToBridge } from "@/api/web3/write/bridge";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
+import { useAllNetworkUserTokenBalance } from "@/api/web3/read/tokenBalance";
 
 const MigrateTokens = () => {
   const { address } = useAccount();
+  const chainId = useChainId();
+  const { data } = useAllNetworkUserTokenBalance();
   const { approveUsdc, isPending } = useApproveNFTYToken();
   const { sendToBridge, isPending: isPendingSendToBridge } = useSendToBridge();
+
+  const activeTokenAmountBigint = data[chainId].amount;
+  const activeTokenAmount = useMemo(
+    () => formatUnits(activeTokenAmountBigint, 18),
+    [activeTokenAmountBigint],
+  );
+
   const { isApproved } = useCheckAllowanceNFTYToken({
-    amount: parseUnits("20", 18),
+    amount: activeTokenAmountBigint,
   });
+
   const buttonConfig = useMemo(() => {
     switch (true) {
       case !isApproved:
         return {
           text: "Approve tokens",
-          onClick: () => approveUsdc(parseUnits("20", 18)),
+          onClick: () => approveUsdc(activeTokenAmountBigint),
           isLoading: isPending,
         };
       case isApproved:
         return {
           text: "Confirm Migration",
           onClick: () =>
-            sendToBridge({ amount: parseUnits("20", 18), address: address! }),
+            sendToBridge({
+              amount: activeTokenAmountBigint,
+              address: address!,
+            }),
           isLoading: isPendingSendToBridge,
         };
       default:
@@ -37,14 +51,7 @@ const MigrateTokens = () => {
           onClick: () => {},
         };
     }
-  }, [
-    isApproved,
-    isPending,
-    isPendingSendToBridge,
-    approveUsdc,
-    sendToBridge,
-    address,
-  ]);
+  }, [isApproved, isPending, isPendingSendToBridge, approveUsdc, activeTokenAmountBigint, sendToBridge, address]);
 
   return (
     <Flex
@@ -77,12 +84,16 @@ const MigrateTokens = () => {
             </Text>
           </Flex>
 
-          <Flex fontSize={{ base: "14px", md: "16px" }} color="custom.300">
+          <Flex
+            fontSize={{ base: "14px", md: "16px" }}
+            color="custom.300"
+            flexWrap="wrap"
+          >
             <Text fontWeight="500" mr="8px">
               Amount to migrate:
             </Text>
             <Text fontWeight="600" mr="4px">
-              123
+              {activeTokenAmount}
             </Text>
             <Text fontWeight="400"> NFTY</Text>
           </Flex>
