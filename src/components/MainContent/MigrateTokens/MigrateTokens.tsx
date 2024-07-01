@@ -52,15 +52,7 @@ const MigrateTokens = () => {
   const { isApproved, refetchAllowanceUsdc } = useCheckAllowanceNFTYToken({
     amount: activeTokenAmountBigint,
   });
-  // useEffect(() => {
-  //   console.log({ isBlock, isSent, isComplete, isRefund });
-  // }, [isBlock, isComplete, isRefund, isSent]);
-  //
-  // useEffect(() => {
-  //   console.log({ userInfo });
-  //   console.log({ hash });
-  //   console.log({ storeHash });
-  // }, [userInfo, hash, storeHash]);
+
 
   useEffect(() => {
     if (isSuccess) {

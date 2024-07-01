@@ -18,17 +18,27 @@ const MigrationSteps = () => {
   const isMounted = useIsMounted();
 
   useEffect(() => {
+    if (pathname === '/') {
+      router.push('/connect')
+    }
+  }, [pathname]);
+
+  useEffect(() => {
     if (isConnected) {
-      setActiveStep(1);
       router.push(migrationSteps[1].url);
     } else {
       router.push(migrationSteps[0].url);
-      setActiveStep(0);
     }
   }, [isConnected]);
 
   useEffect(() => {
-    if (pathname === "/confirm-success" || pathname === '/confirm-error') {
+    if (pathname === "/connect") {
+      setActiveStep(0);
+    }
+    if (pathname === "/migrate") {
+      setActiveStep(1);
+    }
+    if (pathname === "/confirm-success" || pathname === "/confirm-error") {
       setActiveStep(2);
     }
   }, [pathname]);
