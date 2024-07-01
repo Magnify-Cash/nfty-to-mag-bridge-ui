@@ -9,22 +9,33 @@ import {
   MenuList,
   Text,
 } from "@chakra-ui/react";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { useChainId, useSwitchChain } from "wagmi";
 import { Chain } from "viem";
+import { useAllNetworkUserTokenBalance } from "@/api/web3/read/tokenBalance";
+import { mergeConfigs } from "@/lib/helpers/utils";
+import { IChainAdditionalConfig } from "@/lib/types";
 
-const chainsAdditionalConfig: Record<number, { icon: string }> = {
-  1: { icon: "/Ethereum.svg" },
-  11155111: { icon: "/Ethereum.svg" },
-  56: { icon: "/BNB.svg" },
-  137: { icon: "/Polygon.svg" },
+const chainsAdditionalConfig: Record<number, IChainAdditionalConfig> = {
+  1: { icon: "/Ethereum.svg", amount: 0 },
+  11155111: { icon: "/Ethereum.svg", amount: 0 },
+  56: { icon: "/BNB.svg", amount: 0 },
+  97: { icon: "/BNB.svg", amount: 0 },
+  137: { icon: "/Polygon.svg", amount: 0 },
+  80002: { icon: "/Polygon.svg", amount: 0 },
 };
 
 const SwitchNetworkDropdown: FC = () => {
+  const { data } = useAllNetworkUserTokenBalance();
   const [isOpen, setIsOpen] = useState(false);
   const { chains, switchChain } = useSwitchChain();
   const chainId = useChainId();
   const [selectedChain, setSelectedChain] = useState<Chain>(chains[0]);
+
+  const mergedChainsAdditionalConfig = useMemo(
+    () => mergeConfigs(chainsAdditionalConfig, data),
+    [data],
+  );
 
   useEffect(() => {
     const newChainId = chains.find((chain) => chain.id === chainId);
@@ -81,7 +92,8 @@ const SwitchNetworkDropdown: FC = () => {
             borderColor="custom.250"
           >
             {chains.map((item) => {
-              const { icon } = chainsAdditionalConfig[item.id ?? "1"];
+              const { icon, amount } =
+                mergedChainsAdditionalConfig[item.id ?? "1"];
               return (
                 <MenuItem
                   padding="8px"
@@ -124,7 +136,7 @@ const SwitchNetworkDropdown: FC = () => {
                     </Flex>
                     <Flex>
                       <Text fontSize="16px" fontWeight="600" mr="5px">
-                        123
+                        {amount}
                       </Text>
                       <Text fontSize="16px" fontWeight="400">
                         NFTY

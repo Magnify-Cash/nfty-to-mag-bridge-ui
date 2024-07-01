@@ -1,10 +1,137 @@
+"use client";
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
-import React, { FC } from "react";
 import SwitchNetworkDropdown from "../../Dropdown/SwitchNetworkDropdown";
-import Loader from "../../Loader/Loader";
 import { TransferringToOtherAddress } from "@/components/MainContent/MigrateTokens/TransferringToOtherAddress";
+import { useApproveNFTYToken } from "@/api/web3/write/erc20";
+import { useCheckAllowanceNFTYToken } from "@/api/web3/read/erc20";
+import { useEffect, useMemo } from "react";
+import { formatUnits, parseUnits } from "viem";
+import { useSendToBridge } from "@/api/web3/write/bridge";
+import { useAccount, useChainId } from "wagmi";
+import { useAllNetworkUserTokenBalance } from "@/api/web3/read/tokenBalance";
+import { useInfoByUserAddress } from "@/api/http/user";
+import { useActiveTxStore } from "@/state/tx";
+import Loader from "@/components/Loader/Loader";
+import { IUserInfoResponse } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
-const MigrateTokens: FC = () => {
+const MigrateTokens = () => {
+  const { address } = useAccount();
+  const router = useRouter();
+  const { hash: storeHash } = useActiveTxStore();
+  const chainId = useChainId();
+  const { data } = useAllNetworkUserTokenBalance();
+  const { approveUsdc, isPending, isSuccess } = useApproveNFTYToken();
+  const {
+    sendToBridge,
+    isPending: isPendingSendToBridge,
+    hash,
+  } = useSendToBridge();
+  const {
+    data: userInfo,
+    isSent,
+    isComplete,
+    isBlock,
+    isRefund,
+  } = useInfoByUserAddress();
+
+  // const activeTokenAmountBigint = data[chainId].amount;
+  // const activeTokenAmount = useMemo(
+  //   () => formatUnits(activeTokenAmountBigint, 18),
+  //   [activeTokenAmountBigint],
+  // );
+
+  const activeTokenAmountBigint = parseUnits("20", 18);
+  const activeTokenAmount = useMemo(
+    () => formatUnits(activeTokenAmountBigint, 18),
+    [activeTokenAmountBigint],
+  );
+
+  const youWillRecieve = Number(activeTokenAmount) / 8
+
+  const { isApproved, refetchAllowanceUsdc } = useCheckAllowanceNFTYToken({
+    amount: activeTokenAmountBigint,
+  });
+
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetchAllowanceUsdc();
+    }
+  }, [isSuccess, refetchAllowanceUsdc]);
+
+  useEffect(() => {
+    if (
+      isComplete &&
+      storeHash &&
+      storeHash.toLowerCase() ===
+        (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()
+    ) {
+      router.push("/confirm-success");
+    }
+  }, [isComplete, storeHash, userInfo]);
+
+  useEffect(() => {
+    if (
+        isRefund &&
+        storeHash &&
+        storeHash.toLowerCase() ===
+        (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()
+    ) {
+      router.push("/confirm-error");
+    }
+  }, [isComplete, storeHash, userInfo]);
+
+  const buttonConfig = useMemo(() => {
+    switch (true) {
+      case storeHash &&
+        storeHash !== (userInfo as IUserInfoResponse)?.sendTxHash:
+        return {
+          text: "",
+          onClick: () => {},
+          isLoading: true,
+        };
+      case isSent:
+        return {
+          text: "",
+          onClick: () => {},
+          isLoading: true,
+        };
+
+      case !isApproved:
+        return {
+          text: "Approve tokens",
+          onClick: () => approveUsdc(activeTokenAmountBigint),
+          isLoading: isPending,
+        };
+      case isApproved:
+        return {
+          text: "Confirm Migration",
+          onClick: () => {
+            sendToBridge({
+              amount: activeTokenAmountBigint,
+              address: address!,
+            });
+          },
+          isLoading: isPendingSendToBridge,
+        };
+      default:
+        return {
+          text: "Loading",
+          onClick: () => {},
+        };
+    }
+  }, [
+    isSent,
+    isApproved,
+    isPending,
+    isPendingSendToBridge,
+    approveUsdc,
+    activeTokenAmountBigint,
+    sendToBridge,
+    address,
+  ]);
+
   return (
     <Flex
       direction="column"
@@ -36,12 +163,16 @@ const MigrateTokens: FC = () => {
             </Text>
           </Flex>
 
-          <Flex fontSize={{ base: "14px", md: "16px" }} color="custom.300">
+          <Flex
+            fontSize={{ base: "14px", md: "16px" }}
+            color="custom.300"
+            flexWrap="wrap"
+          >
             <Text fontWeight="500" mr="8px">
               Amount to migrate:
             </Text>
             <Text fontWeight="600" mr="4px">
-              123
+              {activeTokenAmount}
             </Text>
             <Text fontWeight="400"> NFTY</Text>
           </Flex>
@@ -80,7 +211,7 @@ const MigrateTokens: FC = () => {
               You will recieve:
             </Text>
             <Text fontWeight="600" mr="4px">
-              12
+              {youWillRecieve}
             </Text>
             <Text fontWeight="400"> MAG</Text>
           </Flex>
@@ -89,50 +220,49 @@ const MigrateTokens: FC = () => {
 
       <TransferringToOtherAddress />
 
-      {/* Confirm migration button*/}
-      <Button
-        variant="blueBtn"
-        h={{ base: "48px", lg: "56px" }}
-        fontSize={{ base: "14px", lg: "16px" }}
-        fontWeight="600"
-        w="100%"
-        // isDisabled
-        sx={{
-          _disabled: {
-            bg: "custom.150",
-            color: "custom.100",
-            cursor: "not-allowed",
-            opacity: "1",
-            _hover: {
+      {isBlock ? (
+        <Button
+          variant="blueBtn"
+          h={{ base: "48px", lg: "56px" }}
+          fontSize={{ base: "14px", lg: "16px" }}
+          fontWeight="600"
+          w="100%"
+          pointerEvents="none"
+        >
+          <Flex>
+            <Box>
+              <Loader />
+            </Box>
+            <Text ml="12px">Waiting for Lock transaction </Text>
+          </Flex>
+        </Button>
+      ) : (
+        <Button
+          onClick={buttonConfig.onClick}
+          isLoading={buttonConfig.isLoading}
+          variant="blueBtn"
+          h={{ base: "48px", lg: "56px" }}
+          fontSize={{ base: "14px", lg: "16px" }}
+          fontWeight="600"
+          w="100%"
+          sx={{
+            _disabled: {
               bg: "custom.150",
               color: "custom.100",
-              boxShadow: "none",
+              cursor: "not-allowed",
               opacity: "1",
+              _hover: {
+                bg: "custom.150",
+                color: "custom.100",
+                boxShadow: "none",
+                opacity: "1",
+              },
             },
-          },
-        }}
-      >
-        <Text>Confirm Migration </Text>
-      </Button>
-
-      <Box mb="20px"></Box>
-
-      {/* Waiting for Lock transaction button*/}
-      <Button
-        variant="blueBtn"
-        h={{ base: "48px", lg: "56px" }}
-        fontSize={{ base: "14px", lg: "16px" }}
-        fontWeight="600"
-        w="100%"
-        pointerEvents="none"
-      >
-        <Flex>
-          <Box>
-            <Loader />
-          </Box>
-          <Text ml="12px">Waiting for Lock transaction </Text>
-        </Flex>
-      </Button>
+          }}
+        >
+          {buttonConfig.text}
+        </Button>
+      )}
     </Flex>
   );
 };
