@@ -1,7 +1,22 @@
-import { Box, Flex, Image, Text } from "@chakra-ui/react";
-import React, { FC } from "react";
+"use client";
 
-const ConfirmMigrationSuccess: FC = () => {
+import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import React, { useMemo } from "react";
+import { useInfoByUserAddress } from "@/api/http/user";
+import { IUserInfoResponse } from "@/lib/types";
+import { formatUnits } from "viem";
+
+const ConfirmMigrationSuccess = () => {
+  const { data } = useInfoByUserAddress();
+  const userInfo = data as IUserInfoResponse | undefined;
+
+  const activeTokenAmount = useMemo(
+    () => (userInfo ? formatUnits(BigInt(userInfo.amount), 18) : 0),
+    [userInfo],
+  );
+
+  const magAmount = Number(activeTokenAmount) / 8;
+
   return (
     <Flex
       direction="column"
@@ -31,11 +46,11 @@ const ConfirmMigrationSuccess: FC = () => {
       >
         Migration of{" "}
         <Box as="span" fontWeight="600">
-          &lt;NFTY AMOUNT&gt;{" "}
-        </Box>
+          {activeTokenAmount} NFTY
+        </Box>{" "}
         to{" "}
         <Box as="span" fontWeight="600">
-          &lt;MAG AMOUNT&gt;
+          {magAmount} MAG
         </Box>{" "}
         is successful
       </Text>

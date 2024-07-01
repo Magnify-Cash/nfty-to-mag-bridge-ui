@@ -23,9 +23,9 @@ export const useApproveNFTYToken = () => {
     [writeContract, contracts],
   );
 
-  const { isLoading } = useWaitForTransactionReceipt({ hash: data });
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash: data });
 
   const isPending = isLoading || isPendingWallet;
 
-  return { approveUsdc, isPending };
+  return { approveUsdc, isPending, isSuccess };
 };

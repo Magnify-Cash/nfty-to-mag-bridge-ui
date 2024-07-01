@@ -30,10 +30,17 @@ export const useInfoByUserAddress = () => {
   const httpClient = useHttpClientByChainId();
   const { address } = useAccount();
 
-  return useQuery({
+  const { data } = useQuery({
     queryKey: ["useInfoByUserAddress"],
     queryFn: () => httpClient(address),
     enabled: !!address,
-    refetchInterval: 10000,
+    refetchInterval: 5000,
   });
+  const userData = data as IUserInfoResponse | undefined;
+  const isSent = userData?.status === "SENT";
+  const isBlock = userData?.status === "BLOCKED";
+  const isComplete = userData?.status === "COMPLETE";
+  const isRefund = userData?.status === "REFUND";
+
+  return { data, isRefund, isComplete, isBlock, isSent };
 };

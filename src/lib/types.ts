@@ -3,7 +3,7 @@ export interface IChainAdditionalConfig {
   amount: number;
 }
 
-export type TXStatuses = "SENT" | "COMPLETE" | "BLOCK" | "REFUND";
+export type TXStatuses = "SENT" | "COMPLETE" | "BLOCKED" | "REFUND";
 
 export interface IUserInfoResponse {
   _id: string;

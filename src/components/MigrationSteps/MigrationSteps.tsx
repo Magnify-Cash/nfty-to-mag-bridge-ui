@@ -5,12 +5,12 @@ import { migrationSteps } from "./data";
 
 import { useAccount } from "wagmi";
 import { useIsMounted } from "@/lib/hooks/isMounted";
-import { Link } from "@chakra-ui/next-js";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const MigrationSteps = () => {
   const { isConnected } = useAccount();
   const router = useRouter();
+  const pathname = usePathname();
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: migrationSteps.length,
@@ -21,8 +21,17 @@ const MigrationSteps = () => {
     if (isConnected) {
       setActiveStep(1);
       router.push(migrationSteps[1].url);
+    } else {
+      router.push(migrationSteps[0].url);
+      setActiveStep(0);
     }
   }, [isConnected]);
+
+  useEffect(() => {
+    if (pathname === "/confirm-success" || pathname === '/confirm-error') {
+      setActiveStep(2);
+    }
+  }, [pathname]);
 
   return (
     <Flex
@@ -56,19 +65,19 @@ const MigrationSteps = () => {
       >
         {migrationSteps.map((item) => {
           const isActive = isMounted && item.id === activeStep;
-          const isFirstStep = item.id === 0;
-          const connectItemUrl = isFirstStep && !isConnected ? item.url : "";
+          // const isFirstStep = item.id === 0;
+          // const connectItemUrl = isFirstStep && !isConnected ? item.url : "";
 
           return (
-            <Link
+            <Flex
               key={item.id}
-              href={isFirstStep ? connectItemUrl : item.url}
-              onClick={() => {
-                if (isFirstStep && !connectItemUrl) {
-                  return;
-                }
-                setActiveStep(item.id);
-              }}
+              // href={isFirstStep ? connectItemUrl : item.url}
+              // onClick={() => {
+              //   if (isFirstStep && !connectItemUrl) {
+              //     return;
+              //   }
+              //   setActiveStep(item.id);
+              // }}
               _hover={{
                 textDecoration: "none",
               }}
@@ -106,7 +115,7 @@ const MigrationSteps = () => {
                   </Box>
                 </Text>
               </Flex>
-            </Link>
+            </Flex>
           );
         })}
       </Flex>
