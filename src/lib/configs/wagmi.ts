@@ -5,7 +5,7 @@ import { injected, walletConnect } from "wagmi/connectors";
 const devChains = [sepolia, polygonAmoy, bscTestnet] as const;
 const devTransports = {
   [sepolia.id]: http(),
-  [polygonAmoy.id]: http(),
+  [polygonAmoy.id]: http("https://polygon-amoy-bor-rpc.publicnode.com/"),
   [bscTestnet.id]: http(),
 };
 
