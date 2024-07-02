@@ -32,13 +32,6 @@ export const useSendToBridge = () => {
 
   const sendToBridge = useCallback(
     ({ address, amount }: { address: `0x${string}`; amount: bigint }) => {
-      console.log("bridge", {
-        address,
-        amount,
-        bridge: contracts.bridge.address,
-        NFTYToken: contracts.NFTYToken.address,
-        contracts,
-      });
       writeContract({
         address: contracts.bridge.address,
         abi: BridgeAbi,
