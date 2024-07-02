@@ -14,6 +14,7 @@ import { useActiveTxStore } from "@/state/tx";
 import Loader from "@/components/Loader/Loader";
 import { IUserInfoResponse } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import { IS_DEV } from "@/lib/constants";
 
 const MigrateTokens = () => {
   const { address } = useAccount();
@@ -25,7 +26,6 @@ const MigrateTokens = () => {
   const {
     sendToBridge,
     isPending: isPendingSendToBridge,
-    hash,
   } = useSendToBridge();
   const {
     data: userInfo,
@@ -35,24 +35,20 @@ const MigrateTokens = () => {
     isRefund,
   } = useInfoByUserAddress();
 
-  // const activeTokenAmountBigint = data[chainId].amount;
-  // const activeTokenAmount = useMemo(
-  //   () => formatUnits(activeTokenAmountBigint, 18),
-  //   [activeTokenAmountBigint],
-  // );
+  const activeTokenAmountBigint = IS_DEV
+    ? parseUnits("20", 18)
+    : data[chainId].amount;
 
-  const activeTokenAmountBigint = parseUnits("20", 18);
   const activeTokenAmount = useMemo(
     () => formatUnits(activeTokenAmountBigint, 18),
     [activeTokenAmountBigint],
   );
 
-  const youWillRecieve = Number(activeTokenAmount) / 8
+  const youWillRecieve = Number(activeTokenAmount) / 8;
 
   const { isApproved, refetchAllowanceUsdc } = useCheckAllowanceNFTYToken({
     amount: activeTokenAmountBigint,
   });
-
 
   useEffect(() => {
     if (isSuccess) {
@@ -73,9 +69,9 @@ const MigrateTokens = () => {
 
   useEffect(() => {
     if (
-        isRefund &&
-        storeHash &&
-        storeHash.toLowerCase() ===
+      isRefund &&
+      storeHash &&
+      storeHash.toLowerCase() ===
         (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()
     ) {
       router.push("/confirm-error");
@@ -108,6 +104,10 @@ const MigrateTokens = () => {
         return {
           text: "Confirm Migration",
           onClick: () => {
+            console.log("Confirm Migration", {
+              activeTokenAmountBigint,
+              address,
+            });
             sendToBridge({
               amount: activeTokenAmountBigint,
               address: address!,
