@@ -13,7 +13,7 @@ export const networksConfig: Record<number, INetworkConfig> = {
     name: "bscTestnet",
     backendUrl: "https://bsc-be.magnify.blaize.technology",
     contracts: {
-      bridge: { address: "0xaB2C4DAb32a8a07dD0403E23ab67b4E787270ace" },
+      bridge: { address: "0xfB548718eCBa9Df6ddb67864F38Bf3decE9771e9" },
       NFTYToken: { address: "0x5Ce62153Cd1F7Da9099d81b58906C0843886dd5D" },
     },
   },
@@ -21,7 +21,7 @@ export const networksConfig: Record<number, INetworkConfig> = {
     name: "polygonAmoy",
     backendUrl: "https://polygon-be.magnify.blaize.technology",
     contracts: {
-      bridge: { address: "0xD10df379F53D5Ed5b643428a774298Cc3B475272" },
+      bridge: { address: "0xe76a587296294211cbAE2A3Fefe83441E2a956A3" },
       NFTYToken: { address: "0x0B5d53E3b79e3317A17AD5F61910d4F807eCa56a" },
     },
   },
@@ -29,7 +29,7 @@ export const networksConfig: Record<number, INetworkConfig> = {
     name: "sepolia",
     backendUrl: "https://eth-be.magnify.blaize.technology",
     contracts: {
-      bridge: { address: "0x42993fde1a2f73C117d266D351097917e2Ac8b49" },
+      bridge: { address: "0xf98f635214a14610516423382D9bF562C5386512" },
       NFTYToken: { address: "0x6c28de594318C8AB116Ad5865A7fc4b75a8e1dfe" },
     },
   },
