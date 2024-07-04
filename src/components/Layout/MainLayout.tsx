@@ -9,7 +9,7 @@ export const MainLayout = ({ children }: { children: ReactNode }) => {
     <>
       <Header />
       <Disclaimer />
-      <Box as="main" padding={{ base: "0 10px", xxs: "0 16px" }}>
+      <Box as="main" padding={{ base: "0 10px", xxs: "0 16px" }} pt={{ base: "40px", lg: "64px" }}>
         <Flex
           maxWidth="1110px"
           justifyContent="space-between"
