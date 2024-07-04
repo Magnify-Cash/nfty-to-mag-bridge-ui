@@ -8,7 +8,7 @@ const Disclaimer: FC = () => {
 
   return (
     <Collapse in={isOpen} animateOpacity>
-      <Box padding={{ base: "0 10px", xxs: "0 16px" }}>
+      <Box padding={{ base: "0 10px", xxs: "0 16px" }} mb={['15px']}>
         <Flex
           bg="custom.100"
           margin="auto"
