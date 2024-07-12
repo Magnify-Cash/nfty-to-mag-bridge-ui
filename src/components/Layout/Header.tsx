@@ -25,7 +25,6 @@ const Header = () => {
 
   const renderButton = useMemo(
     () =>
-      isMounted &&
       address && (
         <Flex>
           <Flex
@@ -62,8 +61,9 @@ const Header = () => {
         </Flex>
       ),
 
-    [activeTokenAmount, address, disconnect, isMounted],
+    [activeTokenAmount, address, disconnect],
   );
+
 
   return (
     <Center
@@ -76,7 +76,7 @@ const Header = () => {
     >
       <Flex
         w="1110px"
-        justifyContent={isConnected ? "space-between" : "center"}
+        justifyContent={isMounted && isConnected ? "space-between" : "center"}
         color="custom.50"
       >
         <Link href="/connect">
@@ -89,7 +89,7 @@ const Header = () => {
             transition="0.3s ease"
           />
         </Link>
-        {renderButton}
+        {isMounted && renderButton}
       </Flex>
     </Center>
   );

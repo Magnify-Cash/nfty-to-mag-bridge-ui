@@ -1,8 +1,8 @@
-import { Center, Flex, Image, Link, Text } from "@chakra-ui/react";
+import {Center, Flex, FlexProps, Image, Link, Text} from "@chakra-ui/react";
 import React, { PropsWithChildren } from "react";
 
-const LinksWrapper = ({ children }: PropsWithChildren) => (
-  <Flex flexDir="column" gap="20px">
+const LinksWrapper = ({ children, ...props }: PropsWithChildren & FlexProps) => (
+  <Flex flexDir="column" gap="20px" {...props}>
     {children}
   </Flex>
 );
@@ -36,11 +36,9 @@ const LinkItem = ({
 
 export const Footer = () => {
   return (
-    <Center as="footer" mt="80px" mb="50px">
-      <Flex w="1110px" justifyContent="space-between">
-        <Flex>
-          <Image src="/mag-logo.svg" alt="mag-logo.svg" />
-        </Flex>
+    <Center as="footer" mt="80px" borderTop='1px solid' borderColor='#284443' py='50px' px={{base: '16px', lg: '0px'}}>
+      <Flex w="1110px" justifyContent="space-between"  flexDirection={{base: 'column', lg: 'row'}} >
+        <Image src="/mag-logo.svg" alt="mag-logo.svg" mb={{base: '50px', lg: '0px'}} />
         <Flex gap="100px">
           <LinksWrapper>
             <LinksHeaderWrapper title="ABOUT MAGNIFY" />
@@ -57,7 +55,7 @@ export const Footer = () => {
               title="$MAG on CoinGecko"
             />
           </LinksWrapper>
-          <LinksWrapper>
+          <LinksWrapper display={{base: 'none', lg: 'flex'}}>
             <LinksHeaderWrapper title="SOCIALS" />
             <LinkItem href="https://x.com/MagnifyCash" title="Twitter" />
             <LinkItem href="https://t.me/magnifycash" title="Telegram" />
@@ -72,6 +70,18 @@ export const Footer = () => {
               target={undefined}
             />
           </LinksWrapper>
+        </Flex>
+        <Flex gap='24px' justifyContent="center" mt='48px' display={{base: 'flex', lg: 'none'}}>
+          <Link href='https://x.com/MagnifyCash' target="_blank" rel="noopener noreferrer">
+            <Image src='/twitter.svg' alt='twitter'/>
+          </Link>
+          <Link href='https://t.me/magnifycash' target="_blank" rel="noopener noreferrer">
+            <Image src='/telegram.svg' alt='telegram'/>
+          </Link>
+          <Link href='https://discord.gg/magnifycash' target="_blank" rel="noopener noreferrer">
+            <Image src='/discord.svg' alt='discord'/>
+          </Link>
+
         </Flex>
       </Flex>
     </Center>

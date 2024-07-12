@@ -33,9 +33,7 @@ const MigrateTokens = () => {
     isRefund,
   } = useInfoByUserAddress();
 
-  const activeTokenAmountBigint = IS_DEV
-    ? parseUnits("20", 18)
-    : data[chainId].amount;
+  const activeTokenAmountBigint = data[chainId].amount;
 
   const activeTokenAmount = useMemo(
     () => formatUnits(activeTokenAmountBigint, 18),
