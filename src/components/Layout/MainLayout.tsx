@@ -3,13 +3,18 @@ import Header from "@/components/Layout/Header";
 import Disclaimer from "@/components/Disclaimer/Disclaimer";
 import { Box, Flex } from "@chakra-ui/react";
 import MigrationSteps from "@/components/MigrationSteps/MigrationSteps";
+import { Footer } from "@/components/Layout/Footer";
 
 export const MainLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <Header />
       <Disclaimer />
-      <Box as="main" padding={{ base: "0 10px", xxs: "0 16px" }} pt={{ base: "40px", lg: "64px" }}>
+      <Box
+        as="main"
+        padding={{ base: "0 10px", xxs: "0 16px" }}
+        pt={{ base: "40px", lg: "64px" }}
+      >
         <Flex
           maxWidth="1110px"
           justifyContent="space-between"
@@ -34,6 +39,7 @@ export const MainLayout = ({ children }: { children: ReactNode }) => {
           </Flex>
         </Flex>
       </Box>
+      <Footer />
     </>
   );
 };
