@@ -10,7 +10,7 @@ import { useAllNetworkUserTokenBalance } from "@/api/web3/read/tokenBalance";
 import { formatUnits } from "viem";
 
 const Header = () => {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { disconnect } = useDisconnect();
 
@@ -23,26 +23,10 @@ const Header = () => {
     [activeTokenAmountBigint],
   );
 
-  const renderButtons = useMemo(
+  const renderButton = useMemo(
     () =>
-      !address ? (
-        <Button
-          width={{
-            base: "120px",
-            xxs: "133px",
-            md: "147px",
-          }}
-          variant="blueBtn"
-          h="40px"
-          fontSize={{
-            base: "12px",
-            sm: "14px",
-          }}
-          fontWeight="500"
-        >
-          Connect Wallet
-        </Button>
-      ) : (
+      isMounted &&
+      address && (
         <Flex>
           <Flex
             borderRadius="8px"
@@ -77,7 +61,8 @@ const Header = () => {
           </Button>
         </Flex>
       ),
-    [activeTokenAmount, address, disconnect],
+
+    [activeTokenAmount, address, disconnect, isMounted],
   );
 
   return (
@@ -89,8 +74,12 @@ const Header = () => {
       mb="15px"
       padding={{ base: "0 10px", xxs: "0 16px" }}
     >
-      <Flex w="1110px" justifyContent="space-between" color="custom.50">
-        <Link href="/public">
+      <Flex
+        w="1110px"
+        justifyContent={isConnected ? "space-between" : "center"}
+        color="custom.50"
+      >
+        <Link href="/connect">
           <Image
             alt="Magnify cash logo"
             src="logo.svg"
@@ -100,7 +89,7 @@ const Header = () => {
             transition="0.3s ease"
           />
         </Link>
-        {isMounted && renderButtons}
+        {renderButton}
       </Flex>
     </Center>
   );
