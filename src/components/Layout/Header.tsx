@@ -17,9 +17,9 @@ const Header = () => {
   const isMounted = useIsMounted();
   const { data } = useAllNetworkUserTokenBalance();
 
-  const activeTokenAmountBigint = data[chainId].amount;
+  const activeTokenAmountBigint = data[chainId]?.amount;
   const activeTokenAmount = useMemo(
-    () => formatUnits(activeTokenAmountBigint, 18),
+    () => formatUnits(activeTokenAmountBigint ?? 0, 18),
     [activeTokenAmountBigint],
   );
 

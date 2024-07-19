@@ -5,7 +5,7 @@ import { TransferringToOtherAddress } from "@/components/MainContent/MigrateToke
 import { useApproveNFTYToken } from "@/api/web3/write/erc20";
 import { useCheckAllowanceNFTYToken } from "@/api/web3/read/erc20";
 import { useEffect, useMemo, useRef } from "react";
-import { formatUnits, parseUnits } from "viem";
+import { formatUnits } from "viem";
 import { useSendToBridge } from "@/api/web3/write/bridge";
 import { useAccount, useChainId } from "wagmi";
 import { useAllNetworkUserTokenBalance } from "@/api/web3/read/tokenBalance";
@@ -14,7 +14,6 @@ import { useActiveTxStore } from "@/state/tx";
 import Loader from "@/components/Loader/Loader";
 import { IUserInfoResponse } from "@/lib/types";
 import { useRouter } from "next/navigation";
-import { IS_DEV } from "@/lib/constants";
 
 const MigrateTokens = () => {
   const otherAddress = useRef<`0x${string}` | undefined>();
@@ -33,10 +32,10 @@ const MigrateTokens = () => {
     isRefund,
   } = useInfoByUserAddress();
 
-  const activeTokenAmountBigint = data[chainId].amount;
+  const activeTokenAmountBigint = data[chainId]?.amount;
 
   const activeTokenAmount = useMemo(
-    () => formatUnits(activeTokenAmountBigint, 18),
+    () => formatUnits(activeTokenAmountBigint ?? 0, 18),
     [activeTokenAmountBigint],
   );
 

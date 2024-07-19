@@ -1,3 +1,4 @@
+'use client'
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useCallback } from "react";
 import { ERC20Abi } from "@/lib/abi/ERC20";
