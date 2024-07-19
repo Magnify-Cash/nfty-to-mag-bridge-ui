@@ -1,26 +1,37 @@
-import Header from "../components/Header/Header";
+import Header from "@/components/Layout/Header";
 import Disclaimer from "../components/Disclaimer/Disclaimer";
-import { Flex, Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import MigrationSteps from "../components/MigrationSteps/MigrationSteps";
-import { MainContent } from "../components/MainContent/MainContent";
+import ConnectWallet from "@/components/MainContent/ConnectWallet/ConnectWallet";
 
 export default function Home() {
   return (
     <>
-      <header>
-        <Header />
-      </header>
+      <Header />
       <main>
         <Disclaimer />
-        <Box padding="0 10px">
+        <Box padding={{ base: "0 10px", xxs: "0 16px" }}>
           <Flex
             maxWidth="1110px"
             justifyContent="space-between"
             margin="auto"
             mb="30"
+            flexDirection={{ base: "column", lg: "row" }}
           >
             <MigrationSteps />
-            <MainContent />
+            <Flex
+              bg="custom.450"
+              borderRadius="20px"
+              border="1px solid"
+              borderColor="custom.150"
+              flexGrow="1"
+              overflow="hidden"
+              margin={{ base: "auto", lg: "initial" }}
+              maxW={{ base: "600px", lg: "initial" }}
+              w={{ base: "100%", lg: "initial" }}
+            >
+              <ConnectWallet />
+            </Flex>
           </Flex>
         </Box>
       </main>

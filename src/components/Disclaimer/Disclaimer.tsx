@@ -1,69 +1,69 @@
-import { Text, Flex, Box } from "@chakra-ui/react";
+"use client";
+import { Box, Collapse, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import React, { FC } from "react";
+import CloseIcon from "@/assets/icons/CloseIcon";
 
 const Disclaimer: FC = () => {
+  const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true });
+
   return (
-    <Box padding="0 10px" mb="64px">
-      <Flex
-        bg="custom.100"
-        margin="auto"
-        maxWidth="1110px"
-        padding="14px"
-        alignItems="center"
-        direction="column"
-        fontSize="12px"
-        position="relative"
-        h="84px"
-        sx={{
-          "&::after": {
-            content: '""',
-            position: "absolute",
-            top: "9px",
-            right: "8px",
-            width: "24px",
-            height: "24px",
-            backgroundImage: "close.svg",
-            backgroundSize: "cover",
-            backgroundPosition: "center center",
-            backgroundRepeat: "no-repeat",
-            cursor: "pointer",
-            transition: "opacity 0.4s ease",
-          },
-          "&:hover::after": {
-            opacity: 0.7,
-          },
-        }}
-      >
-        <Text
-          color="custom.300"
-          fontWeight="600"
-          textTransform="uppercase"
-          mb="3px"
+    <Collapse in={isOpen} animateOpacity>
+      <Box padding={{ base: "0 10px", xxs: "0 16px" }} mb={['15px']}>
+        <Flex
+          bg="custom.100"
+          margin="auto"
+          maxWidth={{ base: "600px", lg: "1110px" }}
+          padding={{ base: "10px", xxs: "15px 16px" }}
+          alignItems="center"
+          direction="column"
+          fontSize={{ base: "11px", sm: "12px" }}
+          position="relative"
+          borderRadius="8px"
+          color="custom.250"
         >
-          DISCLAIMER
-        </Text>
-        <Flex direction="column" alignItems="center">
-          <Text
-            color="custom.250"
-            maxW="360px"
-            textAlign="center"
-            mb="-2px"
-            fontWeight="400"
+          <Box
+            width="24px"
+            height="24px"
+            position="absolute"
+            top={{ base: "4px", md: "9px" }}
+            right={{ base: "5px", md: "8px" }}
+            onClick={onClose}
           >
-            NFTY Token is discontinued and will be terminated at &lt;Timer&gt;{" "}
-          </Text>
+            <CloseIcon />
+          </Box>
           <Text
-            color="custom.250"
-            maxW="500px"
-            textAlign="center"
-            fontWeight="400"
+            color="custom.300"
+            fontWeight="600"
+            textTransform="uppercase"
+            mb="3px"
           >
-            Before that we allow migration for all NFTY holders as of
-            &lt;date&gt; Migration is valid &lt;timer&gt;
+            DISCLAIMER
           </Text>
+
+          <Flex
+            direction="column"
+            alignItems="center"
+            display={{ base: "none", md: "flex" }}
+          >
+            <Text maxW="360px" textAlign="center" mb="-2px" fontWeight="400">
+              NFTY Token is discontinued and will be terminated at &lt;Timer&gt;{" "}
+            </Text>
+            <Text maxW="500px" textAlign="center" fontWeight="400">
+              Before that we allow migration for all NFTY holders as of
+              &lt;date&gt; Migration is valid &lt;timer&gt;
+            </Text>
+          </Flex>
+
+          <Flex>
+            <Text textAlign="center" display={{ base: "flex", md: "none" }}>
+              NFTY Token is discontinued and will be terminated at &lt;Timer&gt;{" "}
+              Before that we allow migration for all NFTY holders as of
+              &lt;date&gt; Migration is valid &lt;timer&gt;{" "}
+            </Text>
+          </Flex>
         </Flex>
-      </Flex>
-    </Box>
+      </Box>
+    </Collapse>
   );
 };
 

@@ -1,51 +1,185 @@
-import { Box, Flex, Image, Text, Input, Button } from "@chakra-ui/react";
-import React, { FC } from "react";
-import Dropdown from "../../Dropdown/Dropdown";
-import Loader from "../../Loader/Loader";
-import CustomCheckbox from "../../CustomCheckbox/CustomCheckbox";
+"use client";
+import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
+import SwitchNetworkDropdown from "../../Dropdown/SwitchNetworkDropdown";
+import { TransferringToOtherAddress } from "@/components/MainContent/MigrateTokens/TransferringToOtherAddress";
+import { useApproveNFTYToken } from "@/api/web3/write/erc20";
+import { useCheckAllowanceNFTYToken } from "@/api/web3/read/erc20";
+import { useEffect, useMemo, useRef } from "react";
+import { formatUnits } from "viem";
+import { useSendToBridge } from "@/api/web3/write/bridge";
+import { useAccount, useChainId } from "wagmi";
+import { useAllNetworkUserTokenBalance } from "@/api/web3/read/tokenBalance";
+import { useInfoByUserAddress } from "@/api/http/user";
+import { useActiveTxStore } from "@/state/tx";
+import Loader from "@/components/Loader/Loader";
+import { IUserInfoResponse } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
-const MigrateTokens: FC = () => {
+const MigrateTokens = () => {
+  const otherAddress = useRef<`0x${string}` | undefined>();
+  const { address } = useAccount();
+  const router = useRouter();
+  const { hash: storeHash } = useActiveTxStore();
+  const chainId = useChainId();
+  const { data } = useAllNetworkUserTokenBalance();
+  const { approveUsdc, isPending, isSuccess } = useApproveNFTYToken();
+  const { sendToBridge, isPending: isPendingSendToBridge } = useSendToBridge();
+  const {
+    data: userInfo,
+    isSent,
+    isComplete,
+    isBlock,
+    isRefund,
+  } = useInfoByUserAddress();
+
+  const activeTokenAmountBigint = data[chainId]?.amount;
+
+  const activeTokenAmount = useMemo(
+    () => formatUnits(activeTokenAmountBigint ?? 0, 18),
+    [activeTokenAmountBigint],
+  );
+
+  const youWillRecieve = Number(activeTokenAmount) / 8;
+
+  const { isApproved, refetchAllowanceUsdc } = useCheckAllowanceNFTYToken({
+    amount: activeTokenAmountBigint,
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetchAllowanceUsdc();
+    }
+  }, [isSuccess, refetchAllowanceUsdc]);
+
+  useEffect(() => {
+    if (
+      isComplete &&
+      storeHash &&
+      storeHash.toLowerCase() ===
+        (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()
+    ) {
+      router.push("/confirm-success");
+    }
+  }, [isComplete, storeHash, userInfo]);
+
+  useEffect(() => {
+    if (
+      isRefund &&
+      storeHash &&
+      storeHash.toLowerCase() ===
+        (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()
+    ) {
+      router.push("/confirm-error");
+    }
+  }, [isComplete, storeHash, userInfo]);
+
+  const buttonConfig = useMemo(() => {
+    switch (true) {
+      case storeHash &&
+        storeHash !== (userInfo as IUserInfoResponse)?.sendTxHash:
+        return {
+          text: "",
+          onClick: () => {},
+          isLoading: true,
+        };
+      case isSent:
+        return {
+          text: "",
+          onClick: () => {},
+          isLoading: true,
+        };
+
+      case !isApproved:
+        return {
+          text: "Approve tokens",
+          onClick: () => approveUsdc(activeTokenAmountBigint),
+          isLoading: isPending,
+        };
+      case isApproved:
+        return {
+          text: "Confirm Migration",
+          onClick: () => {
+            sendToBridge({
+              amount: activeTokenAmountBigint,
+              address: otherAddress.current || address!,
+            });
+          },
+          isLoading: isPendingSendToBridge,
+        };
+      default:
+        return {
+          text: "Loading",
+          onClick: () => {},
+        };
+    }
+  }, [
+    isSent,
+    isApproved,
+    isPending,
+    isPendingSendToBridge,
+    approveUsdc,
+    activeTokenAmountBigint,
+    sendToBridge,
+    address,
+  ]);
+
   return (
-    <Flex direction="column" padding="28px 24px" w="100%">
+    <Flex
+      direction="column"
+      padding={{ base: "15px 10px", xxs: "24px 16px", md: "28px 24px" }}
+      w="100%"
+    >
       <Box mb="24px" w="100%">
-        <Dropdown />
+        <SwitchNetworkDropdown />
       </Box>
 
-      <Flex justifyContent="space-between" w="100%" mb="37px">
+      <Flex
+        justifyContent="space-between"
+        w="100%"
+        mb={{ base: "20px", sm: "31px" }}
+        direction={{ base: "column", xl: "row" }}
+      >
         <Flex
           bg="custom.500"
           borderRadius="8px"
-          padding="14px 16px"
+          padding={{ base: "16px 16px", md: "14px 16px" }}
           direction="column"
-          w="306px"
+          w={{ base: "100%", xl: "306px" }}
+          alignItems={{ base: "center", xl: "flex-start" }}
         >
-          <Flex alignItems="center" mb="13px">
+          <Flex alignItems="center" mb={{ base: "8px", sm: "13px" }}>
             <Image src="NFTY.svg" alt="NFTY icon" marginRight="8px" />
             <Text color="custom.50" fontSize="14px" fontWeight="400">
               NFTY
             </Text>
           </Flex>
 
-          <Flex fontSize="16px" color="custom.300">
+          <Flex
+            fontSize={{ base: "14px", md: "16px" }}
+            color="custom.300"
+            flexWrap="wrap"
+          >
             <Text fontWeight="500" mr="8px">
               Amount to migrate:
             </Text>
             <Text fontWeight="600" mr="4px">
-              123
+              {activeTokenAmount}
             </Text>
             <Text fontWeight="400"> NFTY</Text>
           </Flex>
         </Flex>
 
-        <Flex alignItems="center">
+        <Flex alignItems="center" justifyContent="center">
           <Image
             src="reverse.svg"
             cursor="pointer"
-            transition="0.4s ease"
+            transition="0.3s ease"
             _hover={{ opacity: 0.7 }}
-            margin="0 24px"
-            w="40px"
-            h="40px"
+            margin={{ base: "18px 0", xl: "0 24px" }}
+            w={{ base: "30px", md: "40px" }}
+            h={{ base: "30px", md: "40px" }}
+            alt=""
+            transform={{ base: "rotate(90deg)", xl: "none" }}
           />
         </Flex>
         <Flex
@@ -53,7 +187,8 @@ const MigrateTokens: FC = () => {
           borderRadius="8px"
           padding="14px 16px"
           direction="column"
-          w="306px"
+          w={{ base: "100%", xl: "306px" }}
+          alignItems={{ base: "center", xl: "flex-start" }}
         >
           <Flex alignItems="center" mb="13px">
             <Image src="MAG.svg" alt="MAG icon" marginRight="8px" />
@@ -62,61 +197,67 @@ const MigrateTokens: FC = () => {
             </Text>
           </Flex>
 
-          <Flex fontSize="16px" color="custom.300">
+          <Flex fontSize={{ base: "14px", md: "16px" }} color="custom.300">
             <Text fontWeight="500" mr="8px">
               You will recieve:
             </Text>
             <Text fontWeight="600" mr="4px">
-              12
+              {youWillRecieve}
             </Text>
             <Text fontWeight="400"> MAG</Text>
           </Flex>
         </Flex>
       </Flex>
 
-      <Flex mb="16px">
-        <CustomCheckbox />
-      </Flex>
+      <TransferringToOtherAddress
+        onChange={(address) => {
+          otherAddress.current = address;
+        }}
+      />
 
-      <Flex mb="24px">
-        <Input
-          borderColor="custom.550"
-          placeholder="Enter a Destination Address"
-          h="48px"
-        />
-      </Flex>
-
-      <Button
-        variant="blueBtn"
-        h="56px"
-        fontSize="16px"
-        fontWeight="600"
-        w="100%"
-        // isDisabled
-        sx={{
-          _disabled: {
-            bg: "custom.150",
-            color: "custom.100",
-            cursor: "not-allowed",
-            opacity: "1",
-            _hover: {
+      {isBlock ? (
+        <Button
+          variant="blueBtn"
+          h={{ base: "48px", lg: "56px" }}
+          fontSize={{ base: "14px", lg: "16px" }}
+          fontWeight="600"
+          w="100%"
+          pointerEvents="none"
+        >
+          <Flex>
+            <Box>
+              <Loader />
+            </Box>
+            <Text ml="12px">Waiting for Lock transaction </Text>
+          </Flex>
+        </Button>
+      ) : (
+        <Button
+          onClick={buttonConfig.onClick}
+          isLoading={buttonConfig.isLoading}
+          variant="blueBtn"
+          h={{ base: "48px", lg: "56px" }}
+          fontSize={{ base: "14px", lg: "16px" }}
+          fontWeight="600"
+          w="100%"
+          sx={{
+            _disabled: {
               bg: "custom.150",
               color: "custom.100",
-              boxShadow: "none",
+              cursor: "not-allowed",
               opacity: "1",
+              _hover: {
+                bg: "custom.150",
+                color: "custom.100",
+                boxShadow: "none",
+                opacity: "1",
+              },
             },
-          },
-        }}
-      >
-        {/* Confirm migration */}
-        <Text>Confirm Migration </Text>
-
-        {/* Waiting for Lock transaction */}
-        {/* <Flex>
-          <Text><Loader/></Text>
-          <Text ml="12px">Waiting for Lock transaction </Text>
-        </Flex> */}
-      </Button>
+          }}
+        >
+          {buttonConfig.text}
+        </Button>
+      )}
     </Flex>
   );
 };
