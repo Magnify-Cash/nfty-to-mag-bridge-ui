@@ -1,5 +1,6 @@
 import { formatUnits } from "viem";
 import { IChainAdditionalConfig } from "@/lib/types";
+import { chains } from "@/lib/configs/wagmi";
 
 export const getShortAddress = (address: string, start = 5, endCount = 4) =>
   `${address?.slice(0, start)}...${address?.slice(address.length - (endCount ?? start + 1))}`;
@@ -21,3 +22,8 @@ export function mergeConfigs(
   }
   return mergedConfig;
 }
+
+const supportedChainsId = chains.map((chain) => chain.id);
+
+export const isSupportedChains = (chainId?: number) =>
+  supportedChainsId.find((id) => id === chainId);
