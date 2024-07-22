@@ -5,16 +5,15 @@ import { TransferringToOtherAddress } from "@/components/MainContent/MigrateToke
 import { useApproveNFTYToken } from "@/api/web3/write/erc20";
 import { useCheckAllowanceNFTYToken } from "@/api/web3/read/erc20";
 import { useEffect, useMemo, useRef } from "react";
-import { formatUnits, parseUnits } from "viem";
+import { formatUnits } from "viem";
 import { useSendToBridge } from "@/api/web3/write/bridge";
 import { useAccount, useChainId } from "wagmi";
-import { useAllNetworkUserTokenBalance } from "@/api/web3/read/tokenBalance";
+import { useAllNetworkUserAllocationBalance } from "@/api/web3/read/tokenBalance";
 import { useInfoByUserAddress } from "@/api/http/user";
 import { useActiveTxStore } from "@/state/tx";
 import Loader from "@/components/Loader/Loader";
 import { IUserInfoResponse } from "@/lib/types";
 import { useRouter } from "next/navigation";
-import { IS_DEV } from "@/lib/constants";
 
 const MigrateTokens = () => {
   const otherAddress = useRef<`0x${string}` | undefined>();
@@ -22,7 +21,7 @@ const MigrateTokens = () => {
   const router = useRouter();
   const { hash: storeHash } = useActiveTxStore();
   const chainId = useChainId();
-  const { data } = useAllNetworkUserTokenBalance();
+  const { data: allocationData } = useAllNetworkUserAllocationBalance();
   const { approveUsdc, isPending, isSuccess } = useApproveNFTYToken();
   const { sendToBridge, isPending: isPendingSendToBridge } = useSendToBridge();
   const {
@@ -33,17 +32,17 @@ const MigrateTokens = () => {
     isRefund,
   } = useInfoByUserAddress();
 
-  const activeTokenAmountBigint = data[chainId].amount;
+  const activeAllocationAmountBigint = allocationData[chainId].amount;
 
-  const activeTokenAmount = useMemo(
-    () => formatUnits(activeTokenAmountBigint, 18),
-    [activeTokenAmountBigint],
+  const activeAllocationAmount = useMemo(
+    () => formatUnits(activeAllocationAmountBigint, 18),
+    [activeAllocationAmountBigint],
   );
 
-  const youWillRecieve = Number(activeTokenAmount) / 8;
+  const youWillRecieve = Number(activeAllocationAmount) / 8;
 
   const { isApproved, refetchAllowanceUsdc } = useCheckAllowanceNFTYToken({
-    amount: activeTokenAmountBigint,
+    amount: activeAllocationAmountBigint,
   });
 
   useEffect(() => {
@@ -93,7 +92,7 @@ const MigrateTokens = () => {
       case !isApproved:
         return {
           text: "Approve tokens",
-          onClick: () => approveUsdc(activeTokenAmountBigint),
+          onClick: () => approveUsdc(activeAllocationAmountBigint),
           isLoading: isPending,
         };
       case isApproved:
@@ -101,7 +100,7 @@ const MigrateTokens = () => {
           text: "Confirm Migration",
           onClick: () => {
             sendToBridge({
-              amount: activeTokenAmountBigint,
+              amount: activeAllocationAmountBigint,
               address: otherAddress.current || address!,
             });
           },
@@ -114,12 +113,14 @@ const MigrateTokens = () => {
         };
     }
   }, [
+    storeHash,
+    userInfo,
     isSent,
     isApproved,
     isPending,
     isPendingSendToBridge,
     approveUsdc,
-    activeTokenAmountBigint,
+    activeAllocationAmountBigint,
     sendToBridge,
     address,
   ]);
@@ -164,7 +165,7 @@ const MigrateTokens = () => {
               Amount to migrate:
             </Text>
             <Text fontWeight="600" mr="4px">
-              {activeTokenAmount}
+              {activeAllocationAmount}
             </Text>
             <Text fontWeight="400"> NFTY</Text>
           </Flex>
