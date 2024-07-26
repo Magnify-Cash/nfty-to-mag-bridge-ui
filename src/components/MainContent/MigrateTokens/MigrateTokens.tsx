@@ -4,26 +4,125 @@ import SwitchNetworkDropdown from "../../Dropdown/SwitchNetworkDropdown";
 import { TransferringToOtherAddress } from "@/components/MainContent/MigrateTokens/TransferringToOtherAddress";
 import { useApproveNFTYToken } from "@/api/web3/write/erc20";
 import { useCheckAllowanceNFTYToken } from "@/api/web3/read/erc20";
-import { useEffect, useMemo, useRef } from "react";
+import { ReactNode, useEffect, useMemo, useRef } from "react";
 import { formatUnits } from "viem";
-import { useSendToBridge } from "@/api/web3/write/bridge";
-import { useAccount, useChainId } from "wagmi";
-import { useAllNetworkUserAllocationBalance } from "@/api/web3/read/tokenBalance";
+import { useSendToBridge, useSendToMigrator } from "@/api/web3/write/bridge";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import {
+  useAllNetworkUserTokenBalance,
+  useWillReceiveMagToken,
+} from "@/api/web3/read/tokenBalance";
 import { useInfoByUserAddress } from "@/api/http/user";
 import { useActiveTxStore } from "@/state/tx";
 import Loader from "@/components/Loader/Loader";
 import { IUserInfoResponse } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import {
+  isMainnetCheck,
+  isSupportedChains,
+  supportedChainsId,
+  truncateNumber,
+} from "@/lib/helpers/utils";
+import { useIsMounted } from "@/lib/hooks/isMounted";
+
+const SwitchNetworkButton = ({ children }: { children: ReactNode }) => {
+  const { chainId } = useAccount();
+  const { switchChain } = useSwitchChain();
+  const isMounted = useIsMounted();
+
+  const isSupportedChainId = useMemo(
+    () => isSupportedChains(chainId),
+    [chainId],
+  );
+
+  if (!isMounted) {
+    return null;
+  }
+
+  if (isSupportedChainId) {
+    return children;
+  }
+
+  return (
+    <Button
+      onClick={() => switchChain({ chainId: supportedChainsId[0] })}
+      variant="blueBtn"
+      h={{ base: "48px", lg: "56px" }}
+      fontSize={{ base: "14px", lg: "16px" }}
+      fontWeight="600"
+      w="100%"
+      sx={{
+        _disabled: {
+          bg: "custom.150",
+          color: "custom.100",
+          cursor: "not-allowed",
+          opacity: "1",
+          _hover: {
+            bg: "custom.150",
+            color: "custom.100",
+            boxShadow: "none",
+            opacity: "1",
+          },
+        },
+      }}
+    >
+      Switch Network
+    </Button>
+  );
+};
+
+const YouWillReceive = ({
+  amount,
+  isMainnet,
+  isRefetch,
+}: {
+  amount: bigint;
+  isMainnet: boolean;
+  isRefetch: boolean;
+}) => {
+  const { data, refetch } = useWillReceiveMagToken({ amount, isMainnet });
+
+  const formatedAmount = truncateNumber(formatUnits(data ?? BigInt("0"), 18));
+
+  useEffect(() => {
+    if (isRefetch) {
+      refetch();
+    }
+  }, [isRefetch, refetch]);
+
+  return (
+    <Flex fontSize={{ base: "14px", md: "16px" }} color="custom.300">
+      <Text fontWeight="500" mr="8px">
+        You will receive:
+      </Text>
+      <Text fontWeight="600" mr="4px">
+        {formatedAmount}
+      </Text>
+      <Text fontWeight="400"> MAG</Text>
+    </Flex>
+  );
+};
 
 const MigrateTokens = () => {
-  const otherAddress = useRef<`0x${string}` | undefined>();
-  const { address } = useAccount();
   const router = useRouter();
+  const otherAddress = useRef<`0x${string}` | undefined>();
+  const { address, chainId: walletChainId } = useAccount();
+  const isMainnet = isMainnetCheck(walletChainId);
   const { hash: storeHash } = useActiveTxStore();
   const chainId = useChainId();
-  const { data: allocationData } = useAllNetworkUserAllocationBalance();
-  const { approveUsdc, isPending, isSuccess } = useApproveNFTYToken();
-  const { sendToBridge, isPending: isPendingSendToBridge } = useSendToBridge();
+  const { data } = useAllNetworkUserTokenBalance();
+  const { approveUsdc, isPending, isSuccess } = useApproveNFTYToken(isMainnet);
+  const {
+    sendToBridge,
+    isPending: isPendingSendToBridge,
+    isSuccess: isSuccessSendToBridge,
+  } = useSendToBridge();
+  const {
+    sendToMigrator,
+    isPending: isPendingSendToMigrator,
+    isSuccess: isSuccessSendToMigrator,
+    isError,
+  } = useSendToMigrator();
   const {
     data: userInfo,
     isSent,
@@ -31,18 +130,16 @@ const MigrateTokens = () => {
     isBlock,
     isRefund,
   } = useInfoByUserAddress();
+  const activeTokenAmountBigint = data[walletChainId ?? chainId]?.amount;
 
-  const activeAllocationAmountBigint = allocationData[chainId].amount;
-
-  const activeAllocationAmount = useMemo(
-    () => formatUnits(activeAllocationAmountBigint, 18),
-    [activeAllocationAmountBigint],
+  const activeTokenAmount = useMemo(
+    () => formatUnits(activeTokenAmountBigint ?? 0, 18),
+    [activeTokenAmountBigint],
   );
 
-  const youWillRecieve = Number(activeAllocationAmount) / 8;
-
   const { isApproved, refetchAllowanceUsdc } = useCheckAllowanceNFTYToken({
-    amount: activeAllocationAmountBigint,
+    amount: activeTokenAmountBigint,
+    isMainnet,
   });
 
   useEffect(() => {
@@ -53,25 +150,42 @@ const MigrateTokens = () => {
 
   useEffect(() => {
     if (
-      isComplete &&
-      storeHash &&
-      storeHash.toLowerCase() ===
-        (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()
+      (isComplete &&
+        storeHash &&
+        storeHash.toLowerCase() ===
+          (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()) ||
+      isSuccessSendToMigrator
     ) {
-      router.push("/confirm-success");
+      router.push(`/confirm-success?nfty=${activeTokenAmountBigint}`);
     }
-  }, [isComplete, storeHash, userInfo]);
+  }, [
+    activeTokenAmountBigint,
+    isComplete,
+    isSuccessSendToMigrator,
+    router,
+    storeHash,
+    userInfo,
+  ]);
 
   useEffect(() => {
     if (
-      isRefund &&
-      storeHash &&
-      storeHash.toLowerCase() ===
-        (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()
+      (isRefund &&
+        storeHash &&
+        storeHash.toLowerCase() ===
+          (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()) ||
+      isError
     ) {
-      router.push("/confirm-error");
+      router.push(`/confirm-error?nfty=${activeTokenAmountBigint}`);
     }
-  }, [isComplete, storeHash, userInfo]);
+  }, [
+    activeTokenAmountBigint,
+    isComplete,
+    isError,
+    isRefund,
+    router,
+    storeHash,
+    userInfo,
+  ]);
 
   const buttonConfig = useMemo(() => {
     switch (true) {
@@ -92,19 +206,27 @@ const MigrateTokens = () => {
       case !isApproved:
         return {
           text: "Approve tokens",
-          onClick: () => approveUsdc(activeAllocationAmountBigint),
+          onClick: () => approveUsdc(activeTokenAmountBigint),
           isLoading: isPending,
         };
       case isApproved:
         return {
           text: "Confirm Migration",
           onClick: () => {
+            if (isMainnet) {
+              sendToMigrator({
+                amount: activeTokenAmountBigint,
+                address: otherAddress.current || address!,
+              });
+
+              return;
+            }
             sendToBridge({
-              amount: activeAllocationAmountBigint,
+              amount: activeTokenAmountBigint,
               address: otherAddress.current || address!,
             });
           },
-          isLoading: isPendingSendToBridge,
+          isLoading: isPendingSendToBridge || isPendingSendToMigrator,
         };
       default:
         return {
@@ -119,10 +241,13 @@ const MigrateTokens = () => {
     isApproved,
     isPending,
     isPendingSendToBridge,
+    isPendingSendToMigrator,
     approveUsdc,
-    activeAllocationAmountBigint,
+    activeTokenAmountBigint,
+    isMainnet,
     sendToBridge,
     address,
+    sendToMigrator,
   ]);
 
   return (
@@ -165,7 +290,7 @@ const MigrateTokens = () => {
               Amount to migrate:
             </Text>
             <Text fontWeight="600" mr="4px">
-              {activeAllocationAmount}
+              {truncateNumber(activeTokenAmount)}
             </Text>
             <Text fontWeight="400"> NFTY</Text>
           </Flex>
@@ -199,15 +324,11 @@ const MigrateTokens = () => {
             </Text>
           </Flex>
 
-          <Flex fontSize={{ base: "14px", md: "16px" }} color="custom.300">
-            <Text fontWeight="500" mr="8px">
-              You will recieve:
-            </Text>
-            <Text fontWeight="600" mr="4px">
-              {youWillRecieve}
-            </Text>
-            <Text fontWeight="400"> MAG</Text>
-          </Flex>
+          <YouWillReceive
+            amount={activeTokenAmountBigint}
+            isMainnet={isMainnet}
+            isRefetch={isSuccessSendToBridge || isSuccessSendToMigrator}
+          />
         </Flex>
       </Flex>
 
@@ -234,31 +355,33 @@ const MigrateTokens = () => {
           </Flex>
         </Button>
       ) : (
-        <Button
-          onClick={buttonConfig.onClick}
-          isLoading={buttonConfig.isLoading}
-          variant="blueBtn"
-          h={{ base: "48px", lg: "56px" }}
-          fontSize={{ base: "14px", lg: "16px" }}
-          fontWeight="600"
-          w="100%"
-          sx={{
-            _disabled: {
-              bg: "custom.150",
-              color: "custom.100",
-              cursor: "not-allowed",
-              opacity: "1",
-              _hover: {
+        <SwitchNetworkButton>
+          <Button
+            onClick={buttonConfig.onClick}
+            isLoading={buttonConfig.isLoading}
+            variant="blueBtn"
+            h={{ base: "48px", lg: "56px" }}
+            fontSize={{ base: "14px", lg: "16px" }}
+            fontWeight="600"
+            w="100%"
+            sx={{
+              _disabled: {
                 bg: "custom.150",
                 color: "custom.100",
-                boxShadow: "none",
+                cursor: "not-allowed",
                 opacity: "1",
+                _hover: {
+                  bg: "custom.150",
+                  color: "custom.100",
+                  boxShadow: "none",
+                  opacity: "1",
+                },
               },
-            },
-          }}
-        >
-          {buttonConfig.text}
-        </Button>
+            }}
+          >
+            {buttonConfig.text}
+          </Button>
+        </SwitchNetworkButton>
       )}
     </Flex>
   );

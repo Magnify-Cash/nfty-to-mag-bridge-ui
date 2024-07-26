@@ -13,8 +13,8 @@ export const useSendToBridge = () => {
     writeContract,
     data,
     isPending: isPendingWallet,
-    error,
     failureReason,
+    error,
   } = useWriteContract({
     mutation: {
       onSuccess: (data) => {
@@ -43,9 +43,48 @@ export const useSendToBridge = () => {
     [writeContract, contracts],
   );
 
-  const { isLoading } = useWaitForTransactionReceipt({ hash: data });
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash: data });
 
   const isPending = isLoading || isPendingWallet;
 
-  return { sendToBridge, isPending, hash: data };
+  return { sendToBridge, isPending, hash: data, isSuccess };
+};
+export const useSendToMigrator = () => {
+  const { contracts } = useContractByNetworkId();
+
+  const {
+    writeContract,
+    data,
+    isPending: isPendingWallet,
+    error,
+    failureReason,
+  } = useWriteContract();
+
+  useEffect(() => {
+    if (failureReason && IS_DEV) {
+      console.log({ failureReason });
+      console.log({ error });
+    }
+  }, [failureReason, error]);
+
+  const sendToMigrator = useCallback(
+    ({ address, amount }: { address: `0x${string}`; amount: bigint }) => {
+      writeContract({
+        address: contracts.Migrator!.address,
+        abi: BridgeAbi,
+        functionName: "send",
+        args: [contracts.NFTYToken.address, address, amount],
+      });
+    },
+
+    [writeContract, contracts],
+  );
+
+  const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
+    hash: data,
+  });
+
+  const isPending = isLoading || isPendingWallet;
+
+  return { sendToMigrator, isPending, isSuccess, hash: data, isError };
 };
