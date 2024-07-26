@@ -25,7 +25,7 @@ export function mergeConfigs(
   return mergedConfig;
 }
 
-const supportedChainsId = chains.map((chain) => chain.id);
+export const supportedChainsId = chains.map((chain) => chain.id);
 
 export const isSupportedChains = (chainId?: number) =>
   supportedChainsId.find((id) => id === chainId);

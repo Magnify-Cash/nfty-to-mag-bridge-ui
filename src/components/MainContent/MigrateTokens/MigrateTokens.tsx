@@ -4,10 +4,10 @@ import SwitchNetworkDropdown from "../../Dropdown/SwitchNetworkDropdown";
 import { TransferringToOtherAddress } from "@/components/MainContent/MigrateTokens/TransferringToOtherAddress";
 import { useApproveNFTYToken } from "@/api/web3/write/erc20";
 import { useCheckAllowanceNFTYToken } from "@/api/web3/read/erc20";
-import { useEffect, useMemo, useRef } from "react";
+import { ReactNode, useEffect, useMemo, useRef } from "react";
 import { formatUnits } from "viem";
 import { useSendToBridge, useSendToMigrator } from "@/api/web3/write/bridge";
-import { useAccount, useChainId } from "wagmi";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
 import {
   useAllNetworkUserTokenBalance,
   useWillReceiveMagToken,
@@ -17,7 +17,59 @@ import { useActiveTxStore } from "@/state/tx";
 import Loader from "@/components/Loader/Loader";
 import { IUserInfoResponse } from "@/lib/types";
 import { useRouter } from "next/navigation";
-import { isMainnetCheck, truncateNumber } from "@/lib/helpers/utils";
+import {
+  isMainnetCheck,
+  isSupportedChains,
+  supportedChainsId,
+  truncateNumber,
+} from "@/lib/helpers/utils";
+import { useIsMounted } from "@/lib/hooks/isMounted";
+
+const SwitchNetworkButton = ({ children }: { children: ReactNode }) => {
+  const { chainId } = useAccount();
+  const { switchChain } = useSwitchChain();
+  const isMounted = useIsMounted();
+
+  const isSupportedChainId = useMemo(
+    () => isSupportedChains(chainId),
+    [chainId],
+  );
+
+  if (!isMounted) {
+    return null;
+  }
+
+  if (isSupportedChainId) {
+    return children;
+  }
+
+  return (
+    <Button
+      onClick={() => switchChain({ chainId: supportedChainsId[0] })}
+      variant="blueBtn"
+      h={{ base: "48px", lg: "56px" }}
+      fontSize={{ base: "14px", lg: "16px" }}
+      fontWeight="600"
+      w="100%"
+      sx={{
+        _disabled: {
+          bg: "custom.150",
+          color: "custom.100",
+          cursor: "not-allowed",
+          opacity: "1",
+          _hover: {
+            bg: "custom.150",
+            color: "custom.100",
+            boxShadow: "none",
+            opacity: "1",
+          },
+        },
+      }}
+    >
+      Switch Network
+    </Button>
+  );
+};
 
 const YouWillReceive = ({
   amount,
@@ -303,31 +355,33 @@ const MigrateTokens = () => {
           </Flex>
         </Button>
       ) : (
-        <Button
-          onClick={buttonConfig.onClick}
-          isLoading={buttonConfig.isLoading}
-          variant="blueBtn"
-          h={{ base: "48px", lg: "56px" }}
-          fontSize={{ base: "14px", lg: "16px" }}
-          fontWeight="600"
-          w="100%"
-          sx={{
-            _disabled: {
-              bg: "custom.150",
-              color: "custom.100",
-              cursor: "not-allowed",
-              opacity: "1",
-              _hover: {
+        <SwitchNetworkButton>
+          <Button
+            onClick={buttonConfig.onClick}
+            isLoading={buttonConfig.isLoading}
+            variant="blueBtn"
+            h={{ base: "48px", lg: "56px" }}
+            fontSize={{ base: "14px", lg: "16px" }}
+            fontWeight="600"
+            w="100%"
+            sx={{
+              _disabled: {
                 bg: "custom.150",
                 color: "custom.100",
-                boxShadow: "none",
+                cursor: "not-allowed",
                 opacity: "1",
+                _hover: {
+                  bg: "custom.150",
+                  color: "custom.100",
+                  boxShadow: "none",
+                  opacity: "1",
+                },
               },
-            },
-          }}
-        >
-          {buttonConfig.text}
-        </Button>
+            }}
+          >
+            {buttonConfig.text}
+          </Button>
+        </SwitchNetworkButton>
       )}
     </Flex>
   );
