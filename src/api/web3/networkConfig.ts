@@ -23,7 +23,7 @@ const networksConfigDev: Record<number, INetworkConfig> = {
     name: "bscTestnet",
     backendUrl: "https://bsc-be.magnify.blaize.technology",
     contracts: {
-      bridge: { address: "0x7aB884116fa50A80fDD585c0CAd8FbD2271635D0" },
+      bridge: { address: "0xA0b09Ed92f434e8C8CF178f3cdA837bBd4b96C55" },
       NFTYToken: { address: "0xe3D2c52CA3C9C32Fd0E3c897afaDbB414bc207Df" },
     },
   },
@@ -31,7 +31,7 @@ const networksConfigDev: Record<number, INetworkConfig> = {
     name: "polygonAmoy",
     backendUrl: "https://polygon-be.magnify.blaize.technology",
     contracts: {
-      bridge: { address: "0xC125Db6Aa3aB446b621E1CaB77Deea6B6CC2De0a" },
+      bridge: { address: "0x23BA69D704929635225d2d78921E779E54aACF72" },
       NFTYToken: { address: "0xbDA91415bC7e77b461116778F24Ac2D91d25A298" },
     },
   },
