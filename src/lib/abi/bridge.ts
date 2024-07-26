@@ -1,68 +1,14 @@
 export const BridgeAbi = [
   {
-    inputs: [{ internalType: "address", name: "user", type: "address" }],
-    name: "AllocationsAlreadySet",
-    type: "error",
-  },
-  {
     inputs: [
-      { internalType: "uint256", name: "amount", type: "uint256" },
       {
         internalType: "uint256",
-        name: "minAmount",
+        name: "amount",
         type: "uint256",
       },
+      { internalType: "uint256", name: "minAmount", type: "uint256" },
     ],
     name: "AmountIsLessThanMinimum",
-    type: "error",
-  },
-  { inputs: [], name: "InsufficientAmountToSend", type: "error" },
-  {
-    inputs: [],
-    name: "LengthMismatch",
-    type: "error",
-  },
-  {
-    inputs: [
-      { internalType: "uint256", name: "minTimeToRefund", type: "uint256" },
-      {
-        internalType: "uint256",
-        name: "creationTime",
-        type: "uint256",
-      },
-    ],
-    name: "MinTimeToRefundIsNotReached",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "minTimeToWaitBeforeRefund",
-        type: "uint256",
-      },
-    ],
-    name: "MinTimeToWaitBeforeRefundIsTooBig",
-    type: "error",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "nonce", type: "uint256" }],
-    name: "NonceIsRefunded",
-    type: "error",
-  },
-  {
-    inputs: [{ internalType: "address", name: "caller", type: "address" }],
-    name: "NotWhitelisted",
-    type: "error",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "nonce", type: "uint256" }],
-    name: "OnlyRelayerOrCreatorCanRefund",
-    type: "error",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "nonce", type: "uint256" }],
-    name: "RefundIsBlocked",
     type: "error",
   },
   {
@@ -72,23 +18,12 @@ export const BridgeAbi = [
   },
   { inputs: [], name: "ZeroAddress", type: "error" },
   {
-    inputs: [],
-    name: "ZeroAmount",
-    type: "error",
-  },
-  {
     anonymous: false,
     inputs: [
       {
         indexed: true,
         internalType: "address",
         name: "token",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "tokenOnSecondChain",
         type: "address",
       },
       {
@@ -131,19 +66,6 @@ export const BridgeAbi = [
       },
     ],
     name: "BeaconUpgraded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "nonce",
-        type: "uint256",
-      },
-    ],
-    name: "BlockRefund",
     type: "event",
   },
   {
@@ -202,38 +124,6 @@ export const BridgeAbi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "uint256",
-        name: "minTimeToWaitBeforeRefund",
-        type: "uint256",
-      },
-    ],
-    name: "NewMinTimeToWaitBeforeRefund",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "otherChainToken",
-        type: "address",
-      },
-    ],
-    name: "NewOtherChainToken",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: false,
         internalType: "address",
         name: "account",
@@ -241,37 +131,6 @@ export const BridgeAbi = [
       },
     ],
     name: "Paused",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "nonce",
-        type: "uint256",
-      },
-    ],
-    name: "Refund",
     type: "event",
   },
   {
@@ -359,10 +218,9 @@ export const BridgeAbi = [
       {
         indexed: true,
         internalType: "address",
-        name: "tokenOnSecondChain",
+        name: "to",
         type: "address",
       },
-      { indexed: true, internalType: "address", name: "to", type: "address" },
       {
         indexed: false,
         internalType: "uint256",
@@ -374,12 +232,6 @@ export const BridgeAbi = [
         internalType: "uint256",
         name: "amountToReceive",
         type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "nonce",
-        type: "string",
       },
     ],
     name: "Send",
@@ -426,21 +278,13 @@ export const BridgeAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "RELAYER_ROLE",
-    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "address", name: "token", type: "address" },
       {
-        internalType: "address",
-        name: "tokenOnSecondChain",
-        type: "address",
+        internalType: "uint256",
+        name: "minAmount",
+        type: "uint256",
       },
-      { internalType: "uint256", name: "minAmount", type: "uint256" },
     ],
     name: "addToken",
     outputs: [],
@@ -458,29 +302,6 @@ export const BridgeAbi = [
     inputs: [],
     name: "allWhitelistedTokensLength",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "allocations",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "uint256", name: "nonceToBlock", type: "uint256" },
-    ],
-    name: "blockRefund",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "chain",
-    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
@@ -504,6 +325,13 @@ export const BridgeAbi = [
     name: "getAllWhitelistedTokens",
     outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
+    name: "getConvertedAmount",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "pure",
     type: "function",
   },
   {
@@ -542,33 +370,18 @@ export const BridgeAbi = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "uint24", name: "_secondChainId", type: "uint24" },
-      {
-        internalType: "address",
-        name: "_relayer",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_minTimeToWaitBeforeRefund",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "_chain",
-        type: "string",
-      },
-    ],
+    inputs: [],
     name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "isWhitelisted",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    inputs: [],
+    name: "mag",
+    outputs: [
+      { internalType: "contract IERC20Upgradeable", name: "", type: "address" },
+    ],
     stateMutability: "view",
     type: "function",
   },
@@ -576,62 +389,6 @@ export const BridgeAbi = [
     inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "minAmountForToken",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "minTimeToWaitBeforeRefund",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "nonce",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    name: "nonceInfo",
-    outputs: [
-      { internalType: "address", name: "token", type: "address" },
-      {
-        internalType: "address",
-        name: "creator",
-        type: "address",
-      },
-      { internalType: "address", name: "to", type: "address" },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-      { internalType: "uint256", name: "creationTime", type: "uint256" },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    name: "nonceIsBlockedForRefund",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    name: "nonceIsRefunded",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "otherChainToken",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -654,15 +411,6 @@ export const BridgeAbi = [
     name: "proxiableUUID",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "uint256", name: "nonceToRefund", type: "uint256" },
-    ],
-    name: "refund",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -701,13 +449,6 @@ export const BridgeAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "secondChainId",
-    outputs: [{ internalType: "uint24", name: "", type: "uint24" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "address", name: "token", type: "address" },
       {
@@ -724,14 +465,13 @@ export const BridgeAbi = [
   },
   {
     inputs: [
-      { internalType: "address[]", name: "_accounts", type: "address[]" },
       {
-        internalType: "uint256[]",
-        name: "_allocations",
-        type: "uint256[]",
+        internalType: "contract IERC20Upgradeable",
+        name: "_magToken",
+        type: "address",
       },
     ],
-    name: "setAllocations",
+    name: "setMagToken",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -746,47 +486,6 @@ export const BridgeAbi = [
       },
     ],
     name: "setMinAmountForToken",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "token", type: "address" },
-      {
-        internalType: "address",
-        name: "tokenOnSecondChain",
-        type: "address",
-      },
-    ],
-    name: "setOtherChainToken",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_minTimeToWaitBeforeRefund",
-        type: "uint256",
-      },
-    ],
-    name: "setTimeToWaitBeforeRefund",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address[]", name: "_accounts", type: "address[]" },
-      {
-        internalType: "bool",
-        name: "_isWhitelisted",
-        type: "bool",
-      },
-    ],
-    name: "setWhitelisted",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

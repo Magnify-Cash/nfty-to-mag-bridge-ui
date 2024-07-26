@@ -6,13 +6,18 @@ import { parseUnits } from "viem";
 
 export const useCheckAllowanceNFTYToken = ({
   amount = 0,
+  isMainnet,
 }: {
   amount?: number | bigint;
+  isMainnet?: boolean;
 }) => {
   const { contracts } = useContractByNetworkId();
   const { data: blockNumber } = useBlockNumber({
     watch: true,
   });
+  const spender = isMainnet
+    ? contracts.Migrator!.address
+    : contracts.bridge.address;
 
   const { address } = useAccount();
   const amountValidate =
@@ -26,16 +31,15 @@ export const useCheckAllowanceNFTYToken = ({
     address: contracts.NFTYToken.address,
     abi: ERC20Abi,
     functionName: "allowance",
-    args: [address!, contracts.bridge.address],
+    args: [address!, spender],
   });
-
+  console.log(amountValidate);
   useEffect(() => {
     if (Number(blockNumber) % 4 === 0) {
       refetchAllowanceUsdc();
     }
   }, [blockNumber]);
 
-  const isApproved = data >= amountValidate;
-
+  const isApproved = amountValidate === BigInt(0) ? false : data >= amountValidate;
   return { isApproved, data, refetchAllowanceUsdc };
 };
