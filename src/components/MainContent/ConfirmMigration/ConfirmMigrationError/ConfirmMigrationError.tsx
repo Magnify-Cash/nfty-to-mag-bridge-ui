@@ -1,7 +1,16 @@
-import { Box, Flex, Image, Text } from "@chakra-ui/react";
+"use client";
+import {Button, Flex, Image, Text} from "@chakra-ui/react";
 import React, { FC } from "react";
+import { useActiveTxStore } from "@/state/tx";
+import { useRouter } from "next/navigation";
 
 const ConfirmMigrationError: FC = () => {
+  const router = useRouter();
+  const { setHash } = useActiveTxStore();
+  const onClickHandler = () => {
+    setHash(undefined);
+    router.push("/migrate");
+  };
   return (
     <Flex
       direction="column"
@@ -29,16 +38,25 @@ const ConfirmMigrationError: FC = () => {
         fontWeight="400"
         fontSize={{ base: "14px", md: "16px" }}
       >
-        Migration of{" "}
-        <Box as="span" fontWeight="600">
-          &lt;NFTY AMOUNT&gt;{" "}
-        </Box>
-        to{" "}
-        <Box as="span" fontWeight="600">
-          &lt;MAG AMOUNT&gt;
-        </Box>{" "}
-        was unsuccessful.
+        Migration was unsuccessful.
       </Text>
+      <Flex justifyContent="center" mt="16px">
+        <Button
+            variant="borderedBtn"
+            h="40px"
+            fontSize={{ base: "12px", md: "14px" }}
+            padding={{ base: "0px 5px", xxs: "0px 16px", md: "0px 21px" }}
+            width={{
+              base: "120px",
+              xxs: "133px",
+              md: "147px",
+            }}
+            textTransform="capitalize"
+            onClick={onClickHandler}
+        >
+          back to home page
+        </Button>
+      </Flex>
     </Flex>
   );
 };

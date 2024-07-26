@@ -23,13 +23,13 @@ const MigrationSteps = () => {
     }
   }, [pathname]);
 
-  useEffect(() => {
-    if (isConnected) {
-      router.push(migrationSteps[1].url);
-    } else {
-      router.push(migrationSteps[0].url);
-    }
-  }, [isConnected]);
+  // useEffect(() => {
+  //   if (isConnected) {
+  //     router.push(migrationSteps[1].url);
+  //   } else {
+  //     router.push(migrationSteps[0].url);
+  //   }
+  // }, [isConnected]);
 
   useEffect(() => {
     if (pathname === "/connect") {
