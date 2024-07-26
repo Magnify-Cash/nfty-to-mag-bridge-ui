@@ -6,7 +6,7 @@ import { useApproveNFTYToken } from "@/api/web3/write/erc20";
 import { useCheckAllowanceNFTYToken } from "@/api/web3/read/erc20";
 import { useEffect, useMemo, useRef } from "react";
 import { formatUnits } from "viem";
-import { useSendToBridge } from "@/api/web3/write/bridge";
+import { useSendToBridge, useSendToMigrator } from "@/api/web3/write/bridge";
 import { useAccount, useChainId } from "wagmi";
 import { useAllNetworkUserTokenBalance } from "@/api/web3/read/tokenBalance";
 import { useInfoByUserAddress } from "@/api/http/user";
@@ -14,16 +14,20 @@ import { useActiveTxStore } from "@/state/tx";
 import Loader from "@/components/Loader/Loader";
 import { IUserInfoResponse } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import { isMainnetCheck } from "@/lib/helpers/utils";
 
 const MigrateTokens = () => {
-  const otherAddress = useRef<`0x${string}` | undefined>();
-  const { address } = useAccount();
   const router = useRouter();
+  const otherAddress = useRef<`0x${string}` | undefined>();
+  const { address, chainId: walletChainId } = useAccount();
+  const isMainnet = isMainnetCheck(walletChainId);
   const { hash: storeHash } = useActiveTxStore();
   const chainId = useChainId();
   const { data } = useAllNetworkUserTokenBalance();
-  const { approveUsdc, isPending, isSuccess } = useApproveNFTYToken();
+  const { approveUsdc, isPending, isSuccess } = useApproveNFTYToken(isMainnet);
   const { sendToBridge, isPending: isPendingSendToBridge } = useSendToBridge();
+  const { sendToMigrator, isPending: isPendingSendToMigrator } =
+    useSendToMigrator();
   const {
     data: userInfo,
     isSent,
@@ -32,7 +36,7 @@ const MigrateTokens = () => {
     isRefund,
   } = useInfoByUserAddress();
 
-  const activeTokenAmountBigint = data[chainId]?.amount;
+  const activeTokenAmountBigint = data[walletChainId ?? chainId]?.amount;
 
   const activeTokenAmount = useMemo(
     () => formatUnits(activeTokenAmountBigint ?? 0, 18),
@@ -43,6 +47,7 @@ const MigrateTokens = () => {
 
   const { isApproved, refetchAllowanceUsdc } = useCheckAllowanceNFTYToken({
     amount: activeTokenAmountBigint,
+    isMainnet
   });
 
   useEffect(() => {
@@ -99,6 +104,14 @@ const MigrateTokens = () => {
         return {
           text: "Confirm Migration",
           onClick: () => {
+            if (isMainnet) {
+              sendToMigrator({
+                amount: activeTokenAmountBigint,
+                address: otherAddress.current || address!,
+              });
+
+              return;
+            }
             sendToBridge({
               amount: activeTokenAmountBigint,
               address: otherAddress.current || address!,
@@ -113,14 +126,18 @@ const MigrateTokens = () => {
         };
     }
   }, [
+    storeHash,
+    userInfo,
     isSent,
     isApproved,
     isPending,
     isPendingSendToBridge,
     approveUsdc,
     activeTokenAmountBigint,
+    isMainnet,
     sendToBridge,
     address,
+    sendToMigrator,
   ]);
 
   return (

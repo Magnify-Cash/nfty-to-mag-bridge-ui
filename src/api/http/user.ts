@@ -1,7 +1,7 @@
 import { useQuery } from "wagmi/query";
 import axios from "axios";
 import { useContractByNetworkId } from "@/api/web3/hooks/useContractByNetworkId";
-import { useCallback } from "react";
+import { useMemo } from "react";
 import { useAccount } from "wagmi";
 import { IUserInfoResponse } from "@/lib/types";
 
@@ -19,11 +19,13 @@ const fetchInfoByUserAddress = async (
 const useHttpClientByChainId = () => {
   const { backendUrl } = useContractByNetworkId();
 
-  return useCallback(
-    (userAddress: `0x${string}` | undefined) =>
-      fetchInfoByUserAddress(backendUrl, userAddress),
-    [backendUrl],
-  );
+  return useMemo(() => {
+    if (backendUrl) {
+      return (userAddress: `0x${string}` | undefined) =>
+        fetchInfoByUserAddress(backendUrl, userAddress);
+    }
+    return undefined;
+  }, [backendUrl]);
 };
 
 export const useInfoByUserAddress = () => {
@@ -32,8 +34,8 @@ export const useInfoByUserAddress = () => {
 
   const { data } = useQuery({
     queryKey: ["useInfoByUserAddress"],
-    queryFn: () => httpClient(address),
-    enabled: !!address,
+    queryFn: () => httpClient!(address),
+    enabled: !!address && !!httpClient,
     refetchInterval: 5000,
   });
   const userData = data as IUserInfoResponse | undefined;

@@ -1,11 +1,14 @@
-'use client'
+"use client";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useCallback } from "react";
 import { ERC20Abi } from "@/lib/abi/ERC20";
 import { useContractByNetworkId } from "@/api/web3/hooks/useContractByNetworkId";
 
-export const useApproveNFTYToken = () => {
+export const useApproveNFTYToken = (isMainnet?: boolean) => {
   const { contracts } = useContractByNetworkId();
+  const spender = isMainnet
+    ? contracts.Migrator!.address
+    : contracts.bridge.address;
 
   const {
     writeContract,
@@ -19,9 +22,9 @@ export const useApproveNFTYToken = () => {
         address: contracts.NFTYToken.address,
         abi: ERC20Abi,
         functionName: "approve",
-        args: [contracts.bridge.address, amount],
+        args: [spender, amount],
       }),
-    [writeContract, contracts],
+    [writeContract, contracts.NFTYToken.address, spender],
   );
 
   const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash: data });
