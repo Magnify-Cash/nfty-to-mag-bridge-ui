@@ -13,8 +13,8 @@ export const useSendToBridge = () => {
     writeContract,
     data,
     isPending: isPendingWallet,
-    error,
     failureReason,
+    error,
   } = useWriteContract({
     mutation: {
       onSuccess: (data) => {
@@ -43,11 +43,11 @@ export const useSendToBridge = () => {
     [writeContract, contracts],
   );
 
-  const { isLoading } = useWaitForTransactionReceipt({ hash: data });
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash: data });
 
   const isPending = isLoading || isPendingWallet;
 
-  return { sendToBridge, isPending, hash: data };
+  return { sendToBridge, isPending, hash: data, isSuccess };
 };
 export const useSendToMigrator = () => {
   const { contracts } = useContractByNetworkId();
@@ -80,9 +80,11 @@ export const useSendToMigrator = () => {
     [writeContract, contracts],
   );
 
-  const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash: data });
+  const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
+    hash: data,
+  });
 
   const isPending = isLoading || isPendingWallet;
 
-  return { sendToMigrator, isPending, isSuccess, hash: data };
+  return { sendToMigrator, isPending, isSuccess, hash: data, isError };
 };

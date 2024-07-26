@@ -5,21 +5,39 @@ import React, { useMemo } from "react";
 import { useInfoByUserAddress } from "@/api/http/user";
 import { IUserInfoResponse } from "@/lib/types";
 import { formatUnits } from "viem";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useActiveTxStore } from "@/state/tx";
+import { useWillReceiveMagToken } from "@/api/web3/read/tokenBalance";
+import { useAccount } from "wagmi";
+import {isMainnetCheck, truncateNumber} from "@/lib/helpers/utils";
 
 const ConfirmMigrationSuccess = () => {
   const router = useRouter();
   const { data } = useInfoByUserAddress();
+  const { chainId: walletChainId } = useAccount();
+  const isMainnet = isMainnetCheck(walletChainId);
   const userInfo = data as IUserInfoResponse | undefined;
   const { setHash } = useActiveTxStore();
+  const search = useSearchParams();
+
+  const searchNftyAmount = search.has("nfty")
+    ? BigInt(search.get("nfty")!.toString())
+    : undefined;
 
   const activeTokenAmount = useMemo(
-    () => (userInfo ? formatUnits(BigInt(userInfo.amount), 18) : 0),
-    [userInfo],
+    () =>
+      userInfo
+        ? formatUnits(BigInt(userInfo.amount), 18)
+        : searchNftyAmount
+          ? formatUnits(BigInt(searchNftyAmount), 18)
+          : 0,
+    [searchNftyAmount, userInfo],
   );
 
-  const magAmount = Number(activeTokenAmount) / 8;
+  const { data: magToken } = useWillReceiveMagToken({
+    amount: searchNftyAmount ?? BigInt(userInfo?.amount ?? 0),
+    isMainnet,
+  });
 
   const onClickHandler = () => {
     setHash(undefined);
@@ -60,11 +78,11 @@ const ConfirmMigrationSuccess = () => {
         >
           Migration of{" "}
           <Box as="span" fontWeight="600">
-            {activeTokenAmount} NFTY
+            {truncateNumber(activeTokenAmount)} NFTY
           </Box>{" "}
           to{" "}
           <Box as="span" fontWeight="600">
-            {magAmount} MAG
+            {truncateNumber(formatUnits(magToken, 18))} MAG
           </Box>{" "}
           is successful
         </Text>

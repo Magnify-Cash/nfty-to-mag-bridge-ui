@@ -30,10 +30,10 @@ const useHttpClientByChainId = () => {
 
 export const useInfoByUserAddress = () => {
   const httpClient = useHttpClientByChainId();
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
 
   const { data } = useQuery({
-    queryKey: ["useInfoByUserAddress"],
+    queryKey: ["useInfoByUserAddress", chainId],
     queryFn: () => httpClient!(address),
     enabled: !!address && !!httpClient,
     refetchInterval: 5000,

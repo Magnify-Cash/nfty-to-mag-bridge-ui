@@ -35,3 +35,15 @@ export const isMainnetCheck = (chainId?: number) => {
 
   return mainnetChainId === chainId;
 };
+
+export const truncateNumber = (value: number | string, decimalPlaces = 6) => {
+  const number = typeof value === 'string' ? parseFloat(value) : value;
+
+  if (isNaN(number)) {
+    console.error('Invalid number');
+    return 0;
+  }
+
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.floor(number * factor) / factor;
+};

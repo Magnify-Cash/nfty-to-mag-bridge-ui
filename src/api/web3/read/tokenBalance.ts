@@ -1,10 +1,12 @@
 import { Chain, createPublicClient, http } from "viem";
 import { chains } from "@/lib/configs/wagmi";
 import { useQueries } from "@tanstack/react-query";
-import { useAccount, useBlockNumber } from "wagmi";
+import { useAccount, useBlockNumber, useReadContract } from "wagmi";
 import { ERC20Abi } from "@/lib/abi/ERC20";
 import { networksConfig } from "@/api/web3/networkConfig";
 import { useCallback, useEffect, useMemo } from "react";
+import { useContractByNetworkId } from "@/api/web3/hooks/useContractByNetworkId";
+import { BridgeAbi } from "@/lib/abi/bridge";
 
 const publicProviderFactory = (chain: Chain) =>
   createPublicClient({
@@ -55,8 +57,32 @@ export const useAllNetworkUserTokenBalance = () => {
 
   useEffect(() => {
     if (Number(blockNumber) % 5 === 0) {
-      refetchAll();}
+      refetchAll();
+    }
   }, [blockNumber, refetchAll]);
 
   return { ...data };
+};
+
+export const useWillReceiveMagToken = ({
+  amount,
+  isMainnet,
+}: {
+  amount?: bigint;
+  isMainnet: boolean;
+}) => {
+  const { contracts } = useContractByNetworkId();
+  const contractAddress = isMainnet
+    ? contracts.Migrator!.address
+    : contracts.bridge.address;
+
+  const { data = BigInt(0), refetch } = useReadContract({
+    query: { enabled: !!amount },
+    address: contractAddress,
+    abi: BridgeAbi,
+    functionName: "getConvertedAmount",
+    args: [amount!],
+  });
+
+  return { data, refetch };
 };

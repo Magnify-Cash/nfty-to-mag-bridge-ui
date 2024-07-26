@@ -38,7 +38,7 @@ const networksConfigDev: Record<number, INetworkConfig> = {
   [sepolia.id]: {
     name: "sepolia",
     contracts: {
-      bridge: { address: "0xf98f635214a14610516423382D9bF562C5386512" },
+      bridge: { address: "0x83362A52cF7e3221A73763e508623be7f74f4eA3" },
       Migrator: { address: "0xb8E75E47fE7c195170747CC2Aa3CB862AF1c72b9" },
       NFTYToken: { address: "0x56D2a6fC1aECf6C14B98f53fAa095d962615C2f1" },
     },
@@ -65,7 +65,7 @@ const networksConfigProd: Record<number, INetworkConfig> = {
   [mainnet.id]: {
     name: "mainnet",
     contracts: {
-      bridge: { address: "0xf98f635214a14610516423382D9bF562C5386512" },
+      bridge: { address: "0x83362A52cF7e3221A73763e508623be7f74f4eA3" },
       NFTYToken: { address: "0x6c28de594318C8AB116Ad5865A7fc4b75a8e1dfe" },
       Migrator: { address: "0xb8E75E47fE7c195170747CC2Aa3CB862AF1c72b9" },
     },

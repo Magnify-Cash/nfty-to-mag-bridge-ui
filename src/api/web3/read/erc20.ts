@@ -33,18 +33,13 @@ export const useCheckAllowanceNFTYToken = ({
     functionName: "allowance",
     args: [address!, spender],
   });
-
+  console.log(amountValidate);
   useEffect(() => {
     if (Number(blockNumber) % 4 === 0) {
       refetchAllowanceUsdc();
     }
   }, [blockNumber]);
 
-  const isApproved = data >= amountValidate;
-
+  const isApproved = amountValidate === BigInt(0) ? false : data >= amountValidate;
   return { isApproved, data, refetchAllowanceUsdc };
 };
-// "  address:   0xb8E75E47fE7c195170747CC2Aa3CB862AF1c72b9
-// function:  send(address token, address to, uint256 amount)
-// args:          (0x56D2a6fC1aECf6C14B98f53fAa095d962615C2f1, 0xF3Bc8C5F2A857d68D5809f02352C9d73656d74D4, 1111111111)
-// sender:    0xF3Bc8C5F2A857d68D5809f02352C9d73656d74D4"

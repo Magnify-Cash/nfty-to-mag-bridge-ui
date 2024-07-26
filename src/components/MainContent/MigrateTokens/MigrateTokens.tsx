@@ -8,13 +8,48 @@ import { useEffect, useMemo, useRef } from "react";
 import { formatUnits } from "viem";
 import { useSendToBridge, useSendToMigrator } from "@/api/web3/write/bridge";
 import { useAccount, useChainId } from "wagmi";
-import { useAllNetworkUserTokenBalance } from "@/api/web3/read/tokenBalance";
+import {
+  useAllNetworkUserTokenBalance,
+  useWillReceiveMagToken,
+} from "@/api/web3/read/tokenBalance";
 import { useInfoByUserAddress } from "@/api/http/user";
 import { useActiveTxStore } from "@/state/tx";
 import Loader from "@/components/Loader/Loader";
 import { IUserInfoResponse } from "@/lib/types";
 import { useRouter } from "next/navigation";
-import { isMainnetCheck } from "@/lib/helpers/utils";
+import { isMainnetCheck, truncateNumber } from "@/lib/helpers/utils";
+
+const YouWillReceive = ({
+  amount,
+  isMainnet,
+  isRefetch,
+}: {
+  amount: bigint;
+  isMainnet: boolean;
+  isRefetch: boolean;
+}) => {
+  const { data, refetch } = useWillReceiveMagToken({ amount, isMainnet });
+
+  const formatedAmount = truncateNumber(formatUnits(data ?? BigInt("0"), 18));
+
+  useEffect(() => {
+    if (isRefetch) {
+      refetch();
+    }
+  }, [isRefetch, refetch]);
+
+  return (
+    <Flex fontSize={{ base: "14px", md: "16px" }} color="custom.300">
+      <Text fontWeight="500" mr="8px">
+        You will receive:
+      </Text>
+      <Text fontWeight="600" mr="4px">
+        {formatedAmount}
+      </Text>
+      <Text fontWeight="400"> MAG</Text>
+    </Flex>
+  );
+};
 
 const MigrateTokens = () => {
   const router = useRouter();
@@ -25,9 +60,17 @@ const MigrateTokens = () => {
   const chainId = useChainId();
   const { data } = useAllNetworkUserTokenBalance();
   const { approveUsdc, isPending, isSuccess } = useApproveNFTYToken(isMainnet);
-  const { sendToBridge, isPending: isPendingSendToBridge } = useSendToBridge();
-  const { sendToMigrator, isPending: isPendingSendToMigrator } =
-    useSendToMigrator();
+  const {
+    sendToBridge,
+    isPending: isPendingSendToBridge,
+    isSuccess: isSuccessSendToBridge,
+  } = useSendToBridge();
+  const {
+    sendToMigrator,
+    isPending: isPendingSendToMigrator,
+    isSuccess: isSuccessSendToMigrator,
+    isError,
+  } = useSendToMigrator();
   const {
     data: userInfo,
     isSent,
@@ -35,7 +78,6 @@ const MigrateTokens = () => {
     isBlock,
     isRefund,
   } = useInfoByUserAddress();
-
   const activeTokenAmountBigint = data[walletChainId ?? chainId]?.amount;
 
   const activeTokenAmount = useMemo(
@@ -43,11 +85,9 @@ const MigrateTokens = () => {
     [activeTokenAmountBigint],
   );
 
-  const youWillRecieve = Number(activeTokenAmount) / 8;
-
   const { isApproved, refetchAllowanceUsdc } = useCheckAllowanceNFTYToken({
     amount: activeTokenAmountBigint,
-    isMainnet
+    isMainnet,
   });
 
   useEffect(() => {
@@ -58,25 +98,42 @@ const MigrateTokens = () => {
 
   useEffect(() => {
     if (
-      isComplete &&
-      storeHash &&
-      storeHash.toLowerCase() ===
-        (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()
+      (isComplete &&
+        storeHash &&
+        storeHash.toLowerCase() ===
+          (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()) ||
+      isSuccessSendToMigrator
     ) {
-      router.push("/confirm-success");
+      router.push(`/confirm-success?nfty=${activeTokenAmountBigint}`);
     }
-  }, [isComplete, storeHash, userInfo]);
+  }, [
+    activeTokenAmountBigint,
+    isComplete,
+    isSuccessSendToMigrator,
+    router,
+    storeHash,
+    userInfo,
+  ]);
 
   useEffect(() => {
     if (
-      isRefund &&
-      storeHash &&
-      storeHash.toLowerCase() ===
-        (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()
+      (isRefund &&
+        storeHash &&
+        storeHash.toLowerCase() ===
+          (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()) ||
+      isError
     ) {
-      router.push("/confirm-error");
+      router.push(`/confirm-error?nfty=${activeTokenAmountBigint}`);
     }
-  }, [isComplete, storeHash, userInfo]);
+  }, [
+    activeTokenAmountBigint,
+    isComplete,
+    isError,
+    isRefund,
+    router,
+    storeHash,
+    userInfo,
+  ]);
 
   const buttonConfig = useMemo(() => {
     switch (true) {
@@ -117,7 +174,7 @@ const MigrateTokens = () => {
               address: otherAddress.current || address!,
             });
           },
-          isLoading: isPendingSendToBridge,
+          isLoading: isPendingSendToBridge || isPendingSendToMigrator,
         };
       default:
         return {
@@ -132,6 +189,7 @@ const MigrateTokens = () => {
     isApproved,
     isPending,
     isPendingSendToBridge,
+    isPendingSendToMigrator,
     approveUsdc,
     activeTokenAmountBigint,
     isMainnet,
@@ -180,7 +238,7 @@ const MigrateTokens = () => {
               Amount to migrate:
             </Text>
             <Text fontWeight="600" mr="4px">
-              {activeTokenAmount}
+              {truncateNumber(activeTokenAmount)}
             </Text>
             <Text fontWeight="400"> NFTY</Text>
           </Flex>
@@ -214,15 +272,11 @@ const MigrateTokens = () => {
             </Text>
           </Flex>
 
-          <Flex fontSize={{ base: "14px", md: "16px" }} color="custom.300">
-            <Text fontWeight="500" mr="8px">
-              You will recieve:
-            </Text>
-            <Text fontWeight="600" mr="4px">
-              {youWillRecieve}
-            </Text>
-            <Text fontWeight="400"> MAG</Text>
-          </Flex>
+          <YouWillReceive
+            amount={activeTokenAmountBigint}
+            isMainnet={isMainnet}
+            isRefetch={isSuccessSendToBridge || isSuccessSendToMigrator}
+          />
         </Flex>
       </Flex>
 
