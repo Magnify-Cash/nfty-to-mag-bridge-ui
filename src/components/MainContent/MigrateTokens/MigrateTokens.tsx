@@ -131,7 +131,6 @@ const MigrateTokens = () => {
     isRefund,
   } = useInfoByUserAddress();
   const activeTokenAmountBigint = data[walletChainId ?? chainId]?.amount;
-
   const activeTokenAmount = useMemo(
     () => formatUnits(activeTokenAmountBigint ?? 0, 18),
     [activeTokenAmountBigint],
@@ -156,11 +155,16 @@ const MigrateTokens = () => {
           (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()) ||
       isSuccessSendToMigrator
     ) {
-      router.push(`/confirm-success?nfty=${activeTokenAmountBigint}`);
+      if (isMainnet) {
+        router.push(`/confirm-success?nfty=${activeTokenAmountBigint}`);
+      } else {
+        router.push(`/confirm-success`);
+      }
     }
   }, [
     activeTokenAmountBigint,
     isComplete,
+    isMainnet,
     isSuccessSendToMigrator,
     router,
     storeHash,
@@ -175,12 +179,17 @@ const MigrateTokens = () => {
           (userInfo as IUserInfoResponse)?.sendTxHash.toLowerCase()) ||
       isError
     ) {
-      router.push(`/confirm-error?nfty=${activeTokenAmountBigint}`);
+      if (isMainnet) {
+        router.push(`/confirm-error?nfty=${activeTokenAmountBigint}`);
+      } else {
+        router.push(`/confirm-error`);
+      }
     }
   }, [
     activeTokenAmountBigint,
     isComplete,
     isError,
+    isMainnet,
     isRefund,
     router,
     storeHash,

@@ -33,7 +33,6 @@ export const useCheckAllowanceNFTYToken = ({
     functionName: "allowance",
     args: [address!, spender],
   });
-  console.log(amountValidate);
   useEffect(() => {
     if (Number(blockNumber) % 4 === 0) {
       refetchAllowanceUsdc();
