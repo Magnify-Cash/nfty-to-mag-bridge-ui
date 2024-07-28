@@ -48,26 +48,26 @@ const networksConfigDev: Record<number, INetworkConfig> = {
 const networksConfigProd: Record<number, INetworkConfig> = {
   [bsc.id]: {
     name: "bsc",
-    backendUrl: "https://bsc-be.magnify.blaize.technology",
+    backendUrl: "https://mag-bridge-backend-bsc-g6d8j.ondigitalocean.app/nfty-to-mag-backend-bsc",
     contracts: {
-      bridge: { address: "0xfB548718eCBa9Df6ddb67864F38Bf3decE9771e9" },
-      NFTYToken: { address: "0x5Ce62153Cd1F7Da9099d81b58906C0843886dd5D" },
+      bridge: { address: "0x7F7c5328621965608d0a6a95a6C33461Ef3FDb24" },
+      NFTYToken: { address: "0x5774B2fc3e91aF89f89141EacF76545e74265982" },
     },
   },
   [polygon.id]: {
     name: "polygon",
-    backendUrl: "https://polygon-be.magnify.blaize.technology",
+    backendUrl: "https://mag-bridge-backend-bsc-g6d8j.ondigitalocean.app/nfty-to-mag-backend-polygon",
     contracts: {
-      bridge: { address: "0xe76a587296294211cbAE2A3Fefe83441E2a956A3" },
-      NFTYToken: { address: "0x0B5d53E3b79e3317A17AD5F61910d4F807eCa56a" },
+      bridge: { address: "0x7F7c5328621965608d0a6a95a6C33461Ef3FDb24" },
+      NFTYToken: { address: "0xCC081220542a60A8Ea7963C4F53D522b503272c1" },
     },
   },
   [mainnet.id]: {
     name: "mainnet",
     contracts: {
-      bridge: { address: "0x83362A52cF7e3221A73763e508623be7f74f4eA3" },
-      NFTYToken: { address: "0x6c28de594318C8AB116Ad5865A7fc4b75a8e1dfe" },
-      Migrator: { address: "0xb8E75E47fE7c195170747CC2Aa3CB862AF1c72b9" },
+      bridge: { address: "0xA60F87ff29C03b6500f22dE535B57918EFa8afe1" },
+      NFTYToken: { address: "0xE1D7C7a4596B038CEd2A84bF65B8647271C53208" },
+      Migrator: { address: "0xb78A3a7e54c59204E36658C0fCdf7CC2fBE830eC" },
     },
   },
 };
