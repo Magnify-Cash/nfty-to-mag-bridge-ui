@@ -32,8 +32,6 @@ const ConnectWallet = () => {
         lineHeight={{ base: "21px", sm: "24px" }}
         mb={{ base: "22px", sm: "25px" }}
       >
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
       </Text>
 
       <Flex direction="column" w="100%" gap='16px'>
