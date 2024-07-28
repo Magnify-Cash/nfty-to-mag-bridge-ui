@@ -9,7 +9,7 @@ export const MainLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <Header />
-      <Disclaimer />
+      {/*<Disclaimer />*/}
       <Box
         as="main"
         padding={{ base: "0 10px", xxs: "0 16px" }}

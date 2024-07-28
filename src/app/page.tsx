@@ -9,7 +9,7 @@ export default function Home() {
     <>
       <Header />
       <main>
-        <Disclaimer />
+        {/*<Disclaimer />*/}
         <Box padding={{ base: "0 10px", xxs: "0 16px" }}>
           <Flex
             maxWidth="1110px"
